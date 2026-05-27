@@ -1,0 +1,28 @@
+# Sensitive files - NEVER commit these
+.private/
+
+# API keys
+*.properties
+local.properties
+api-keys.properties
+
+# IDE
+.idea/
+*.iml
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Signing keys
+*.jks
+*.keystore
+release.properties
+
+# Logs
+*.log
