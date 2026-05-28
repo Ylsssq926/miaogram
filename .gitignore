@@ -11,13 +11,28 @@ api-keys.properties
 *.iml
 .gradle/
 build/
+obj/
 captures/
 .externalNativeBuild/
 .cxx/
 
+# Android project specific (from upstream)
+TMessagesProj/.cxx/
+TMessagesProj/jniLibs/
+TMessagesProj/jniRes/
+TMessagesProj/afat/
+TMessagesProj_App/afat/
+TMessagesProj_AppHockeyApp/afat/
+TMessagesProj_AppStandalone/afat/
+TMessagesProj_AppHuawei/afat/
+TMessagesProj/google-services.json
+**/google-services.json
+TMessagesProj/config/release.keystore
+
 # OS
 .DS_Store
 Thumbs.db
+**/.DS_Store
 
 # Signing keys
 *.jks
