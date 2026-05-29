@@ -1189,6 +1189,9 @@ public class NotificationsController extends BaseController {
                     }
                     dialogId = messageObject.getFromChatId();
                 }
+                if (com.miaogram.miao.feature.KeywordFilter.shouldMute(messageObject)) { // MIAOGRAM_HOOK: keyword notification mute (MIAO_MS_1)
+                    continue;
+                }
                 if (isPersonalMessage(messageObject)) {
                     personalCount++;
                 }

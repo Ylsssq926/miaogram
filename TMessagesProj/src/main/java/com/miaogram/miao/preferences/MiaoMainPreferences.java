@@ -33,6 +33,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
+import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
@@ -61,6 +62,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
     private int hideNonContactPhoneRow;
     private int safeDefaultsRow;
     private int privacyInfoRow;
+    private int messagesHeaderRow;
+    private int keywordMuteRow;
+    private int keywordsEditRow;
+    private int messagesInfoRow;
 
     @NonNull
     @Override
@@ -82,6 +87,14 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 boolean newValue = !flag.isEnabled();
                 MiaoConfig.setFeatureEnabled(flag, newValue);
                 ((TextCheckCell) view).setChecked(newValue);
+                return;
+            }
+            if (position == keywordsEditRow) {
+                com.miaogram.miao.feature.KeywordFilterDialog.show(context, () -> {
+                    if (listView.getAdapter() != null) {
+                        listView.getAdapter().notifyItemChanged(keywordsEditRow);
+                    }
+                });
             }
         });
 
@@ -113,6 +126,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         hideNonContactPhoneRow = rowCount++;
         safeDefaultsRow = rowCount++;
         privacyInfoRow = rowCount++;
+        messagesHeaderRow = rowCount++;
+        keywordMuteRow = rowCount++;
+        keywordsEditRow = rowCount++;
+        messagesInfoRow = rowCount++;
     }
 
     /** Maps a toggle row to its backing Flag, or null for non-toggle rows. */
@@ -131,6 +148,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         if (position == ghostModeRow) return Flags.MIAO_PF_3;
         if (position == hideNonContactPhoneRow) return Flags.MIAO_PF_5;
         if (position == safeDefaultsRow) return Flags.MIAO_PF_6;
+        if (position == keywordMuteRow) return Flags.MIAO_MS_1;
         return null;
     }
 
@@ -139,6 +157,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         private static final int TYPE_CHECK = 0;
         private static final int TYPE_INFO = 1;
         private static final int TYPE_HEADER = 2;
+        private static final int TYPE_SETTINGS = 3;
 
         private final Context context;
 
@@ -148,7 +167,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
 
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
-            return holder.getItemViewType() == TYPE_CHECK;
+            int type = holder.getItemViewType();
+            return type == TYPE_CHECK || type == TYPE_SETTINGS;
         }
 
         @Override
@@ -162,8 +182,12 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 return TYPE_CHECK;
             }
             if (position == accountHeaderRow || position == folderHeaderRow
-                    || position == interfaceHeaderRow || position == privacyHeaderRow) {
+                    || position == interfaceHeaderRow || position == privacyHeaderRow
+                    || position == messagesHeaderRow) {
                 return TYPE_HEADER;
+            }
+            if (position == keywordsEditRow) {
+                return TYPE_SETTINGS;
             }
             return TYPE_INFO;
         }
@@ -177,6 +201,9 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             } else if (viewType == TYPE_HEADER) {
                 view = new HeaderCell(context);
+                view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            } else if (viewType == TYPE_SETTINGS) {
+                view = new TextSettingsCell(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             } else {
                 view = new TextInfoPrivacyCell(context);
@@ -254,6 +281,11 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                                 LocaleController.getString(R.string.MiaoSafeDefaults),
                                 LocaleController.getString(R.string.MiaoSafeDefaultsInfo),
                                 Flags.MIAO_PF_6.isEnabled(), true, false);
+                    } else if (position == keywordMuteRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoKeywordMute),
+                                LocaleController.getString(R.string.MiaoKeywordMuteInfo),
+                                Flags.MIAO_MS_1.isEnabled(), true, true);
                     }
                     break;
                 }
@@ -267,6 +299,21 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setText(LocaleController.getString(R.string.MiaoInterfaceSectionInfo));
                     } else if (position == privacyHeaderRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoPrivacySectionInfo));
+                    } else if (position == messagesHeaderRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoMessagesSectionInfo));
+                    }
+                    break;
+                }
+                case TYPE_SETTINGS: {
+                    TextSettingsCell cell = (TextSettingsCell) holder.itemView;
+                    if (position == keywordsEditRow) {
+                        int n = com.miaogram.miao.feature.KeywordFilter.count();
+                        String value = n == 0
+                                ? LocaleController.getString(R.string.MiaoKeywordsNone)
+                                : LocaleController.formatString(R.string.MiaoKeywordsCount, n);
+                        cell.setTextAndValue(
+                                LocaleController.getString(R.string.MiaoKeywords),
+                                value, false);
                     }
                     break;
                 }
@@ -280,6 +327,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setText("");
                     } else if (position == privacyInfoRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoPrivacySectionHint));
+                    } else if (position == messagesInfoRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoMessagesSectionHint));
                     }
                     break;
                 }

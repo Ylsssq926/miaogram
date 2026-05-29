@@ -81,6 +81,11 @@ public final class Flags {
     /** pf:6 — see .private/flag-mapping.md */
     public static final Flag MIAO_PF_6 = define("miao_pf_6", true, FlagSource.LOCAL);
 
+    // ----- Message domain -----------------------------------------------------------------------
+
+    /** ms:1 — see .private/flag-mapping.md */
+    public static final Flag MIAO_MS_1 = define("miao_ms_1", false, FlagSource.LOCAL);
+
     // ----- (More flags will be added here as features are implemented) --------------------------
 
     // ============================================================================================
@@ -108,6 +113,7 @@ public final class Flags {
                 MIAO_AC_1, MIAO_AC_2,
                 MIAO_UI_1, MIAO_UI_3, MIAO_UI_4, MIAO_UI_5, MIAO_UI_6, MIAO_UI_7, MIAO_UI_8, MIAO_UI_9,
                 MIAO_PF_1, MIAO_PF_2, MIAO_PF_3, MIAO_PF_4, MIAO_PF_5, MIAO_PF_6,
+                MIAO_MS_1,
         };
         for (Flag f : declared) {
             if (FlagRegistry.find(f.getKey()) == null) {

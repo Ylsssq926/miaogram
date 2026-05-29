@@ -66,4 +66,15 @@
     <string name="MiaoSafeDefaultsInfo">Don\'t pre-check destructive options when blocking or deleting</string>
     <string name="MiaoPrivacySectionHint">These options change how MiaoGram behaves toward Telegram servers and other users. Use at your own discretion.</string>
 
+    <!-- Messages section -->
+    <string name="MiaoMessagesSectionInfo">Messages</string>
+    <string name="MiaoKeywordMute">Mute keyword notifications</string>
+    <string name="MiaoKeywordMuteInfo">Silence notifications for messages containing your keywords</string>
+    <string name="MiaoKeywords">Muted keywords</string>
+    <string name="MiaoKeywordsInfo">One keyword per line. Messages containing any of them won\'t notify you.</string>
+    <string name="MiaoKeywordsHint">word or phrase</string>
+    <string name="MiaoKeywordsNone">None set</string>
+    <string name="MiaoKeywordsCount">%1$d keyword(s)</string>
+    <string name="MiaoMessagesSectionHint">Keyword muting only hides notifications. Messages still appear in chats and unread counts are unchanged.</string>
+
 </resources>
