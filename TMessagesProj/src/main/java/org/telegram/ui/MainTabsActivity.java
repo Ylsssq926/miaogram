@@ -518,6 +518,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                         LaunchActivity.instance.switchToAccount(account, true);
                     }
                 });
+                if (com.miaogram.miao.account.AccountRemark.isEnabled()) { // MIAOGRAM_HOOK: long-press to set account remark
+                    btn.setOnLongClickListener(v -> {
+                        o.dismiss();
+                        com.miaogram.miao.account.AccountRemarkDialog.show(getContext(), account, null);
+                        return true;
+                    });
+                }
                 o.addView(btn, LayoutHelper.createLinear(230, 48));
             }
         }
@@ -572,7 +579,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         final TextView textView = new TextView(getContext());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         textView.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
-        textView.setText(UserObject.getUserName(user));
+        textView.setText(com.miaogram.miao.account.AccountRemark.getDisplayName(account, UserObject.getUserName(user))); // MIAOGRAM_HOOK: show local remark if set
         textView.setMaxLines(2);
         textView.setEllipsize(TextUtils.TruncateAt.END);
         btn.addView(textView, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f, Gravity.CENTER_VERTICAL, 13, 0, 14, 0));

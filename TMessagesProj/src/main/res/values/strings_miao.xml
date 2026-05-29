@@ -24,5 +24,6 @@
     <string name="MiaoMaxAccounts">More accounts</string>
     <string name="MiaoMaxAccountsInfo">Allow up to 10 logged-in accounts</string>
     <string name="MiaoMaxAccountsHint">When enabled, you can add up to 10 accounts instead of the default 4. Restart the app after toggling.</string>
+    <string name="MiaoAccountRemarkTitle">Account remark</string>
 
 </resources>
