@@ -6742,8 +6742,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     selectWithStableId = true;
                 }
                 filterTabsView.removeTabs();
+                final boolean miaoHideDefaultTab = com.miaogram.miao.ui.TabHideHelper.shouldHideDefaultTab(filters.size()); // MIAOGRAM_HOOK
                 for (int a = 0, N = filters.size(); a < N; a++) {
                     if (filters.get(a).isDefault()) {
+                        if (miaoHideDefaultTab) { // MIAOGRAM_HOOK: skip All Chats tab when enabled and other folders exist
+                            continue;
+                        }
                         filterTabsView.addTab(a, 0, LocaleController.getString(R.string.FilterAllChats), null, false, true, filters.get(a).locked);
                     } else {
                         final MessagesController.DialogFilter filter = filters.get(a);
@@ -6773,6 +6777,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     viewPages[a].listView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
                 }
                 filterTabsView.finishAddingTabs(animatedUpdateItems);
+                if (miaoHideDefaultTab && filterTabsView.getCurrentTabId() == filterTabsView.getDefaultTabId()) { // MIAOGRAM_HOOK: default tab hidden but still selected -> move to first visible tab
+                    filterTabsView.selectFirstTab();
+                }
                 if (updateCurrentTab) {
                     switchToCurrentSelectedMode(false);
                 }
