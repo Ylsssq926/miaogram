@@ -19,4 +19,10 @@
     <string name="MiaoSettings">MiaoGram Settings</string>
     <string name="MiaoSettingsComingSoon">More options will land here in upcoming releases.</string>
 
+    <!-- Account section -->
+    <string name="MiaoAccountSectionInfo">Account</string>
+    <string name="MiaoMaxAccounts">More accounts</string>
+    <string name="MiaoMaxAccountsInfo">Allow up to 10 logged-in accounts</string>
+    <string name="MiaoMaxAccountsHint">When enabled, you can add up to 10 accounts instead of the default 4. Restart the app after toggling.</string>
+
 </resources>
