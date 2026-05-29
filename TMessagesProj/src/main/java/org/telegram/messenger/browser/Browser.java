@@ -298,6 +298,9 @@ public class Browser {
         final int currentAccount = UserConfig.selectedAccount;
         boolean[] forceBrowser = new boolean[]{false};
         boolean internalUri = isInternalUri(uri, forceBrowser);
+        if (!internalUri) { // MIAOGRAM_HOOK: strip tracking params from external urls
+            uri = com.miaogram.miao.feature.UrlSanitizer.sanitize(uri);
+        }
         String browserPackage = getBrowserPackageName(browser);
         if (browserPackage != null) {
             tryTelegraph = false;

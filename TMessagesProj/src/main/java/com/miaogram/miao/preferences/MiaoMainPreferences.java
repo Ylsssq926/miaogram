@@ -49,6 +49,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
     private int folderInfoRow;
     private int interfaceHeaderRow;
     private int hideStoriesRow;
+    private int streamerModeRow;
+    private int stripTrackingRow;
     private int interfaceInfoRow;
     private int privacyHeaderRow;
     private int blockSponsoredRow;
@@ -95,6 +97,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         folderInfoRow = rowCount++;
         interfaceHeaderRow = rowCount++;
         hideStoriesRow = rowCount++;
+        streamerModeRow = rowCount++;
+        stripTrackingRow = rowCount++;
         interfaceInfoRow = rowCount++;
         privacyHeaderRow = rowCount++;
         blockSponsoredRow = rowCount++;
@@ -110,6 +114,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         if (position == accountRemarkRow) return Flags.MIAO_AC_2;
         if (position == hideAllChatsRow) return Flags.MIAO_UI_3;
         if (position == hideStoriesRow) return Flags.MIAO_UI_4;
+        if (position == streamerModeRow) return Flags.MIAO_UI_6;
+        if (position == stripTrackingRow) return Flags.MIAO_UI_7;
         if (position == blockSponsoredRow) return Flags.MIAO_PF_1;
         if (position == bypassRestrictionsRow) return Flags.MIAO_PF_2;
         if (position == ghostModeRow) return Flags.MIAO_PF_3;
@@ -190,7 +196,17 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setTextAndValueAndCheck(
                                 LocaleController.getString(R.string.MiaoHideStories),
                                 LocaleController.getString(R.string.MiaoHideStoriesInfo),
-                                Flags.MIAO_UI_4.isEnabled(), true, false);
+                                Flags.MIAO_UI_4.isEnabled(), true, true);
+                    } else if (position == streamerModeRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoStreamerMode),
+                                LocaleController.getString(R.string.MiaoStreamerModeInfo),
+                                Flags.MIAO_UI_6.isEnabled(), true, true);
+                    } else if (position == stripTrackingRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoStripTracking),
+                                LocaleController.getString(R.string.MiaoStripTrackingInfo),
+                                Flags.MIAO_UI_7.isEnabled(), true, false);
                     } else if (position == blockSponsoredRow) {
                         cell.setTextAndValueAndCheck(
                                 LocaleController.getString(R.string.MiaoBlockSponsored),

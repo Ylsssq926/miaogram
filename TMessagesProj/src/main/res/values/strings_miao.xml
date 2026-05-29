@@ -38,6 +38,10 @@
     <string name="MiaoInterfaceSectionInfo">Interface</string>
     <string name="MiaoHideStories">Hide Stories</string>
     <string name="MiaoHideStoriesInfo">Hide the Stories bar at the top of the chat list</string>
+    <string name="MiaoStreamerMode">Screenshot protection</string>
+    <string name="MiaoStreamerModeInfo">Block screenshots and screen recording (restart to apply)</string>
+    <string name="MiaoStripTracking">Clean tracking links</string>
+    <string name="MiaoStripTrackingInfo">Remove utm_*, fbclid and similar trackers from opened links</string>
 
     <!-- Privacy / gray-area section -->
     <string name="MiaoPrivacySectionInfo">Privacy &amp; Extras</string>

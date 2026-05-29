@@ -49,6 +49,12 @@ public final class Flags {
     /** ui:5 — see .private/flag-mapping.md */
     public static final Flag MIAO_UI_5 = define("miao_ui_5", false, FlagSource.LOCAL);
 
+    /** ui:6 — see .private/flag-mapping.md */
+    public static final Flag MIAO_UI_6 = define("miao_ui_6", false, FlagSource.LOCAL);
+
+    /** ui:7 — see .private/flag-mapping.md */
+    public static final Flag MIAO_UI_7 = define("miao_ui_7", true, FlagSource.LOCAL);
+
     // ----- Platform feature domain (gray-area, default OFF) -------------------------------------
 
     /** pf:1 — see .private/flag-mapping.md */
@@ -88,7 +94,7 @@ public final class Flags {
         // 1. Verify all known flags are registered.
         Flag[] declared = {
                 MIAO_AC_1, MIAO_AC_2,
-                MIAO_UI_1, MIAO_UI_3, MIAO_UI_4, MIAO_UI_5,
+                MIAO_UI_1, MIAO_UI_3, MIAO_UI_4, MIAO_UI_5, MIAO_UI_6, MIAO_UI_7,
                 MIAO_PF_1, MIAO_PF_2, MIAO_PF_3, MIAO_PF_4,
         };
         for (Flag f : declared) {

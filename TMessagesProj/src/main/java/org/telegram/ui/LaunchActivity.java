@@ -424,7 +424,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
         }
         getWindow().setBackgroundDrawableResource(R.drawable.transparent);
-        flagSecureReason = new FlagSecureReason(getWindow(), () -> SharedConfig.passcodeHash.length() > 0 && !SharedConfig.allowScreenCapture);
+        flagSecureReason = new FlagSecureReason(getWindow(), () -> com.miaogram.miao.flags.Flags.MIAO_UI_6.isEnabled() || SharedConfig.passcodeHash.length() > 0 && !SharedConfig.allowScreenCapture); // MIAOGRAM_HOOK: streamer mode (global FLAG_SECURE)
         flagSecureReason.attach();
 
         super.onCreate(savedInstanceState);
