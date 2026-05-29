@@ -618,6 +618,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int passwordSuggestionRow;
     private int settingsSectionRow;
     private int settingsSectionRow2;
+    private int miaoSettingsRow; // MIAOGRAM_HOOK: entry row for MiaoMainPreferences
     private int notificationRow;
     private int languageRow;
     private int privacyRow;
@@ -4515,6 +4516,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 presentFragment(new StickersActivity(MediaDataController.TYPE_IMAGE, null));
             } else if (position == liteModeRow) {
                 presentFragment(new LiteModeSettingsActivity());
+            } else if (position == miaoSettingsRow) { // MIAOGRAM_HOOK
+                presentFragment(new com.miaogram.miao.preferences.MiaoMainPreferences());
             } else if (position == devicesRow) {
                 presentFragment(new SessionsActivity(0));
             } else if (position == questionRow) {
@@ -10399,6 +10402,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         filtersRow = -1;
         liteModeRow = -1;
         stickersRow = -1;
+        miaoSettingsRow = -1; // MIAOGRAM_HOOK
         devicesRow = -1;
         devicesSectionRow = -1;
         helpHeaderRow = -1;
@@ -10559,6 +10563,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 notificationRow = rowCount++;
                 dataRow = rowCount++;
                 liteModeRow = rowCount++;
+                miaoSettingsRow = rowCount++; // MIAOGRAM_HOOK: MiaoGram settings entry
 //                stickersRow = rowCount++;
                 if (getMessagesController().filtersEnabled || !getMessagesController().dialogFilters.isEmpty()) {
                     filtersRow = rowCount++;
@@ -13710,6 +13715,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setTextAndIcon(LocaleController.getString(R.string.StickersName), R.drawable.msg2_sticker, true);
                     } else if (position == liteModeRow) {
                         textCell.setTextAndIcon(LocaleController.getString(R.string.PowerUsage), R.drawable.msg2_battery, true);
+                    } else if (position == miaoSettingsRow) { // MIAOGRAM_HOOK
+                        textCell.setTextAndIcon(LocaleController.getString(R.string.MiaoSettings), R.drawable.ic_miao_settings, true);
                     } else if (position == questionRow) {
                         textCell.setTextAndIcon(LocaleController.getString(R.string.AskAQuestion), R.drawable.msg2_ask_question, true);
                     } else if (position == faqRow) {
@@ -14195,7 +14202,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     position == clearLogsRow || position == switchBackendRow || position == setAvatarRow || position == addToGroupButtonRow ||
                     position == addToContactsRow || position == liteModeRow || position == premiumGiftingRow || position == businessRow ||
                     position == botStarsBalanceRow || position == botTonBalanceRow || position == channelBalanceRow || position == botPermissionLocation ||
-                    position == botPermissionBiometry || position == botPermissionEmojiStatus || position == tonRow
+                    position == botPermissionBiometry || position == botPermissionEmojiStatus || position == tonRow ||
+                    position == miaoSettingsRow // MIAOGRAM_HOOK
             ) {
                 return VIEW_TYPE_TEXT;
             } else if (position == notificationsDividerRow) {

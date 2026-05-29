@@ -318,6 +318,16 @@ public class ApplicationLoader extends Application {
             applicationContext = getApplicationContext();
         }
 
+        // MIAOGRAM_HOOK: Run framework self-check on debug builds (ADR-004).
+        // Crashes the build immediately on misconfiguration; no-op on release.
+        if (BuildConfig.DEBUG) {
+            try {
+                com.miaogram.miao.flags.Flags.selfCheck();
+            } catch (Throwable t) {
+                FileLog.e("MiaoGram selfCheck failed", t);
+            }
+        }
+
         NativeLoader.initNativeLibs(ApplicationLoader.applicationContext);
         try {
             ConnectionsManager.native_setJava(false);
