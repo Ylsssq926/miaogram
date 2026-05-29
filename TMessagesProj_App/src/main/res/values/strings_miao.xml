@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MiaoGram custom strings - application module.
+
+  This file lives in TMessagesProj_App (application module). Its sole purpose:
+  override string resources from the upstream TMessagesProj (library module),
+  using Android's standard application-over-library resource merging.
+
+  When you add a new string that is NOT overriding an upstream string,
+  put it in the OTHER strings_miao.xml inside TMessagesProj/src/main/res/values/.
+-->
+<resources>
+
+    <!-- Application name overrides upstream values from TMessagesProj/res/values/strings.xml -->
+    <string name="AppName">MiaoGram</string>
+    <string name="AppNameBeta">MiaoGram Beta</string>
+
+</resources>
