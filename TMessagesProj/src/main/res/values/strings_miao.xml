@@ -34,4 +34,19 @@
     <string name="MiaoHideAllChatsInfo">Remove the default All Chats folder tab</string>
     <string name="MiaoHideAllChatsHint">Hides the \"All Chats\" tab when you have other folders. Has no effect if you have no custom folders.</string>
 
+    <!-- Interface section -->
+    <string name="MiaoInterfaceSectionInfo">Interface</string>
+    <string name="MiaoHideStories">Hide Stories</string>
+    <string name="MiaoHideStoriesInfo">Hide the Stories bar at the top of the chat list</string>
+
+    <!-- Privacy / gray-area section -->
+    <string name="MiaoPrivacySectionInfo">Privacy &amp; Extras</string>
+    <string name="MiaoBlockSponsored">Hide sponsored messages</string>
+    <string name="MiaoBlockSponsoredInfo">Don\'t show channel ads</string>
+    <string name="MiaoGhostMode">Ghost mode</string>
+    <string name="MiaoGhostModeInfo">Don\'t send read receipts, typing or online status</string>
+    <string name="MiaoBypassRestrictions">Allow saving restricted content</string>
+    <string name="MiaoBypassRestrictionsInfo">Enable forward / save / screenshot in restricted chats</string>
+    <string name="MiaoPrivacySectionHint">These options change how MiaoGram behaves toward Telegram servers and other users. Use at your own discretion.</string>
+
 </resources>

@@ -47,6 +47,14 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
     private int folderHeaderRow;
     private int hideAllChatsRow;
     private int folderInfoRow;
+    private int interfaceHeaderRow;
+    private int hideStoriesRow;
+    private int interfaceInfoRow;
+    private int privacyHeaderRow;
+    private int blockSponsoredRow;
+    private int ghostModeRow;
+    private int bypassRestrictionsRow;
+    private int privacyInfoRow;
 
     @NonNull
     @Override
@@ -85,6 +93,14 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         folderHeaderRow = rowCount++;
         hideAllChatsRow = rowCount++;
         folderInfoRow = rowCount++;
+        interfaceHeaderRow = rowCount++;
+        hideStoriesRow = rowCount++;
+        interfaceInfoRow = rowCount++;
+        privacyHeaderRow = rowCount++;
+        blockSponsoredRow = rowCount++;
+        ghostModeRow = rowCount++;
+        bypassRestrictionsRow = rowCount++;
+        privacyInfoRow = rowCount++;
     }
 
     /** Maps a toggle row to its backing Flag, or null for non-toggle rows. */
@@ -93,6 +109,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         if (position == maxAccountsRow) return Flags.MIAO_AC_1;
         if (position == accountRemarkRow) return Flags.MIAO_AC_2;
         if (position == hideAllChatsRow) return Flags.MIAO_UI_3;
+        if (position == hideStoriesRow) return Flags.MIAO_UI_4;
+        if (position == blockSponsoredRow) return Flags.MIAO_PF_1;
+        if (position == bypassRestrictionsRow) return Flags.MIAO_PF_2;
+        if (position == ghostModeRow) return Flags.MIAO_PF_3;
         return null;
     }
 
@@ -123,7 +143,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
             if (flagForRow(position) != null) {
                 return TYPE_CHECK;
             }
-            if (position == accountHeaderRow || position == folderHeaderRow) {
+            if (position == accountHeaderRow || position == folderHeaderRow
+                    || position == interfaceHeaderRow || position == privacyHeaderRow) {
                 return TYPE_HEADER;
             }
             return TYPE_INFO;
@@ -165,6 +186,26 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                                 LocaleController.getString(R.string.MiaoHideAllChats),
                                 LocaleController.getString(R.string.MiaoHideAllChatsInfo),
                                 Flags.MIAO_UI_3.isEnabled(), true, false);
+                    } else if (position == hideStoriesRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoHideStories),
+                                LocaleController.getString(R.string.MiaoHideStoriesInfo),
+                                Flags.MIAO_UI_4.isEnabled(), true, false);
+                    } else if (position == blockSponsoredRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoBlockSponsored),
+                                LocaleController.getString(R.string.MiaoBlockSponsoredInfo),
+                                Flags.MIAO_PF_1.isEnabled(), true, true);
+                    } else if (position == ghostModeRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoGhostMode),
+                                LocaleController.getString(R.string.MiaoGhostModeInfo),
+                                Flags.MIAO_PF_3.isEnabled(), true, true);
+                    } else if (position == bypassRestrictionsRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoBypassRestrictions),
+                                LocaleController.getString(R.string.MiaoBypassRestrictionsInfo),
+                                Flags.MIAO_PF_2.isEnabled(), true, false);
                     }
                     break;
                 }
@@ -174,6 +215,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setText(LocaleController.getString(R.string.MiaoAccountSectionInfo));
                     } else if (position == folderHeaderRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoFolderSectionInfo));
+                    } else if (position == interfaceHeaderRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoInterfaceSectionInfo));
+                    } else if (position == privacyHeaderRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoPrivacySectionInfo));
                     }
                     break;
                 }
@@ -183,6 +228,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setText(LocaleController.getString(R.string.MiaoMaxAccountsHint));
                     } else if (position == folderInfoRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoHideAllChatsHint));
+                    } else if (position == interfaceInfoRow) {
+                        cell.setText("");
+                    } else if (position == privacyInfoRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoPrivacySectionHint));
                     }
                     break;
                 }
