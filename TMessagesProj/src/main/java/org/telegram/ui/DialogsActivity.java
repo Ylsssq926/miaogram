@@ -12466,6 +12466,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (dialogStoriesCell == null || storiesVisibilityAnimator != null || rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment() || searchIsShowed || actionBar == null || actionBar.isActionModeShowed() || onlySelect) {
             return;
         }
+        if (com.miaogram.miao.flags.Flags.MIAO_UI_4.isEnabled()) { // MIAOGRAM_HOOK: hide stories bar entirely
+            dialogStoriesCellVisible = false;
+            hasOnlySlefStories = false;
+            dialogStoriesCell.setVisibility(View.GONE);
+            return;
+        }
         if (StoryRecorder.isVisible() || (getLastStoryViewer() != null && getLastStoryViewer().isFullyVisible())) {
             animated = false;
         }

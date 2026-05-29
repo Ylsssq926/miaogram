@@ -43,6 +43,26 @@ public final class Flags {
     /** ui:3 — see .private/flag-mapping.md (ui:2 was reserved for a dropped feature, not reused) */
     public static final Flag MIAO_UI_3 = define("miao_ui_3", false, FlagSource.LOCAL);
 
+    /** ui:4 — see .private/flag-mapping.md */
+    public static final Flag MIAO_UI_4 = define("miao_ui_4", false, FlagSource.LOCAL);
+
+    /** ui:5 — see .private/flag-mapping.md */
+    public static final Flag MIAO_UI_5 = define("miao_ui_5", false, FlagSource.LOCAL);
+
+    // ----- Platform feature domain (gray-area, default OFF) -------------------------------------
+
+    /** pf:1 — see .private/flag-mapping.md */
+    public static final Flag MIAO_PF_1 = define("miao_pf_1", false, FlagSource.LOCAL);
+
+    /** pf:2 — see .private/flag-mapping.md */
+    public static final Flag MIAO_PF_2 = define("miao_pf_2", false, FlagSource.LOCAL);
+
+    /** pf:3 — see .private/flag-mapping.md */
+    public static final Flag MIAO_PF_3 = define("miao_pf_3", false, FlagSource.LOCAL);
+
+    /** pf:4 — see .private/flag-mapping.md */
+    public static final Flag MIAO_PF_4 = define("miao_pf_4", false, FlagSource.LOCAL);
+
     // ----- (More flags will be added here as features are implemented) --------------------------
 
     // ============================================================================================
@@ -66,7 +86,11 @@ public final class Flags {
      */
     public static void selfCheck() {
         // 1. Verify all known flags are registered.
-        Flag[] declared = { MIAO_AC_1, MIAO_AC_2, MIAO_UI_1, MIAO_UI_3 };
+        Flag[] declared = {
+                MIAO_AC_1, MIAO_AC_2,
+                MIAO_UI_1, MIAO_UI_3, MIAO_UI_4, MIAO_UI_5,
+                MIAO_PF_1, MIAO_PF_2, MIAO_PF_3, MIAO_PF_4,
+        };
         for (Flag f : declared) {
             if (FlagRegistry.find(f.getKey()) == null) {
                 throw new IllegalStateException(
