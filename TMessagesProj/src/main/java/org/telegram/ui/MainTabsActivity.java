@@ -491,12 +491,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                         }
                     }
                 }
-                if (!UserConfig.hasPremiumOnAccounts()) {
+                if (!UserConfig.hasPremiumOnAccounts() && !com.miaogram.miao.account.MaxAccountsOverride.isExpandedEnabled()) { // MIAOGRAM_HOOK: skip premium account-slot deduction when expanded accounts is on
                     freeAccounts -= (UserConfig.MAX_ACCOUNT_COUNT - UserConfig.MAX_ACCOUNT_DEFAULT_COUNT);
                 }
                 if (freeAccounts > 0 && availableAccount != null) {
                     presentFragment(new LoginActivity(availableAccount));
-                } else if (!UserConfig.hasPremiumOnAccounts()) {
+                } else if (!UserConfig.hasPremiumOnAccounts() && !com.miaogram.miao.account.MaxAccountsOverride.isExpandedEnabled()) { // MIAOGRAM_HOOK
                     showDialog(new LimitReachedBottomSheet(this, getContext(), TYPE_ACCOUNTS, currentAccount, null));
                 }
             });

@@ -40,4 +40,14 @@ public final class MaxAccountsOverride {
     public static int getEffectiveMax() {
         return Flags.MIAO_AC_1.isEnabled() ? EXPANDED_MAX : OFFICIAL_MAX;
     }
+
+    /**
+     * Whether the expanded multi-account feature is enabled.
+     * Used by upstream hooks to decide whether to bypass the Premium account-slot
+     * gate (the "add account" flow normally deducts non-premium slots and shows a
+     * paywall; when expanded accounts is on, we skip that).
+     */
+    public static boolean isExpandedEnabled() {
+        return Flags.MIAO_AC_1.isEnabled();
+    }
 }
