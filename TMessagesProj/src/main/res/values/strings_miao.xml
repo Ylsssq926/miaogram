@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MiaoGram custom strings - main module.
+
+  This file holds string resources that are referenced by code in TMessagesProj
+  (the library module), e.g. com.miaogram.miao.* classes.
+
+  Strings here MUST NOT have the same name as any string in upstream
+  TMessagesProj/src/main/res/values/strings.xml — that would cause a
+  "Duplicate resources" build error.
+
+  For overriding upstream strings (like AppName), use the OTHER strings_miao.xml
+  in TMessagesProj_App/src/main/res/values/strings_miao.xml — only application
+  modules can override library module resources.
+-->
+<resources>
+
+    <!-- Settings page -->
+    <string name="MiaoSettings">MiaoGram Settings</string>
+    <string name="MiaoSettingsComingSoon">More options will land here in upcoming releases.</string>
+
+</resources>
