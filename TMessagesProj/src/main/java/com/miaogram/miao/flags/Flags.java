@@ -40,6 +40,9 @@ public final class Flags {
     /** ui:1 — see .private/flag-mapping.md */
     public static final Flag MIAO_UI_1 = define("miao_ui_1", false, FlagSource.LOCAL);
 
+    /** ui:3 — see .private/flag-mapping.md (ui:2 was reserved for a dropped feature, not reused) */
+    public static final Flag MIAO_UI_3 = define("miao_ui_3", false, FlagSource.LOCAL);
+
     // ----- (More flags will be added here as features are implemented) --------------------------
 
     // ============================================================================================
@@ -63,7 +66,7 @@ public final class Flags {
      */
     public static void selfCheck() {
         // 1. Verify all known flags are registered.
-        Flag[] declared = { MIAO_AC_1, MIAO_AC_2, MIAO_UI_1 };
+        Flag[] declared = { MIAO_AC_1, MIAO_AC_2, MIAO_UI_1, MIAO_UI_3 };
         for (Flag f : declared) {
             if (FlagRegistry.find(f.getKey()) == null) {
                 throw new IllegalStateException(

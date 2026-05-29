@@ -25,5 +25,13 @@
     <string name="MiaoMaxAccountsInfo">Allow up to 10 logged-in accounts</string>
     <string name="MiaoMaxAccountsHint">When enabled, you can add up to 10 accounts instead of the default 4. Restart the app after toggling.</string>
     <string name="MiaoAccountRemarkTitle">Account remark</string>
+    <string name="MiaoAccountRemark">Account remarks</string>
+    <string name="MiaoAccountRemarkInfo">Long-press an account to set a local nickname</string>
+
+    <!-- Folder section -->
+    <string name="MiaoFolderSectionInfo">Folders</string>
+    <string name="MiaoHideAllChats">Hide \"All Chats\" tab</string>
+    <string name="MiaoHideAllChatsInfo">Remove the default All Chats folder tab</string>
+    <string name="MiaoHideAllChatsHint">Hides the \"All Chats\" tab when you have other folders. Has no effect if you have no custom folders.</string>
 
 </resources>
