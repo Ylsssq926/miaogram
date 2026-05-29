@@ -70,7 +70,7 @@ public class LogoutActivity extends BaseFragment {
 
         rowCount = 0;
         alternativeHeaderRow = rowCount++;
-        if (UserConfig.getActivatedAccountsCount() < UserConfig.MAX_ACCOUNT_COUNT) {
+        if (UserConfig.getActivatedAccountsCount() < com.miaogram.miao.account.MaxAccountsOverride.getEffectiveMax()) { // MIAOGRAM_HOOK
             addAccountRow = rowCount++;
         } else {
             addAccountRow = -1;
