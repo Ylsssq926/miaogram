@@ -2408,7 +2408,7 @@ public class AlertsCreator {
             });
 
             if (forceDeleteForAll) {
-                cell[0].setChecked(deleteForAll[0] = true, false);
+            cell[0].setChecked(deleteForAll[0] = com.miaogram.miao.feature.SafeDefaults.defaultChecked(true), false); // MIAOGRAM_HOOK: safer destructive defaults (MIAO_PF_6)
                 updateText.run();
             }
         }
@@ -3367,7 +3367,7 @@ public class AlertsCreator {
             builder.setMessage(replaceTags(LocaleController.formatString("BlockUsersMessage", R.string.BlockUsersMessage, LocaleController.formatPluralString("UsersCount", count))));
         }
 
-        final boolean[] checks = new boolean[]{true, true};
+        final boolean[] checks = com.miaogram.miao.feature.SafeDefaults.defaultChecks(new boolean[]{true, true}); // MIAOGRAM_HOOK: safer destructive defaults (MIAO_PF_6)
 
         for (int a = 0; a < cell.length; a++) {
             if (a == 0 && !reportSpam) {
@@ -3377,9 +3377,9 @@ public class AlertsCreator {
             cell[a] = new CheckBoxCell(context, 1);
             cell[a].setBackgroundDrawable(Theme.getSelectorDrawable(false));
             if (a == 0) {
-                cell[a].setText(LocaleController.getString(R.string.ReportSpamTitle), "", true, false);
+                cell[a].setText(LocaleController.getString(R.string.ReportSpamTitle), "", checks[a], false); // MIAOGRAM_HOOK: initial state follows checks[] (MIAO_PF_6)
             } else {
-                cell[a].setText(count == 1 ? LocaleController.getString(R.string.DeleteThisChatBothSides) : LocaleController.getString(R.string.DeleteTheseChatsBothSides), "", true, false);
+                cell[a].setText(count == 1 ? LocaleController.getString(R.string.DeleteThisChatBothSides) : LocaleController.getString(R.string.DeleteTheseChatsBothSides), "", checks[a], false); // MIAOGRAM_HOOK: initial state follows checks[] (MIAO_PF_6)
             }
             cell[a].setPadding(LocaleController.isRTL ? dp(16) : dp(8), 0, LocaleController.isRTL ? dp(8) : dp(16), 0);
             linearLayout.addView(cell[a], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));

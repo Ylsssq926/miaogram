@@ -51,11 +51,15 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
     private int hideStoriesRow;
     private int streamerModeRow;
     private int stripTrackingRow;
+    private int showIdDcRow;
+    private int messageSecondsRow;
     private int interfaceInfoRow;
     private int privacyHeaderRow;
     private int blockSponsoredRow;
     private int ghostModeRow;
     private int bypassRestrictionsRow;
+    private int hideNonContactPhoneRow;
+    private int safeDefaultsRow;
     private int privacyInfoRow;
 
     @NonNull
@@ -99,11 +103,15 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         hideStoriesRow = rowCount++;
         streamerModeRow = rowCount++;
         stripTrackingRow = rowCount++;
+        showIdDcRow = rowCount++;
+        messageSecondsRow = rowCount++;
         interfaceInfoRow = rowCount++;
         privacyHeaderRow = rowCount++;
         blockSponsoredRow = rowCount++;
         ghostModeRow = rowCount++;
         bypassRestrictionsRow = rowCount++;
+        hideNonContactPhoneRow = rowCount++;
+        safeDefaultsRow = rowCount++;
         privacyInfoRow = rowCount++;
     }
 
@@ -116,9 +124,13 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         if (position == hideStoriesRow) return Flags.MIAO_UI_4;
         if (position == streamerModeRow) return Flags.MIAO_UI_6;
         if (position == stripTrackingRow) return Flags.MIAO_UI_7;
+        if (position == showIdDcRow) return Flags.MIAO_UI_8;
+        if (position == messageSecondsRow) return Flags.MIAO_UI_9;
         if (position == blockSponsoredRow) return Flags.MIAO_PF_1;
         if (position == bypassRestrictionsRow) return Flags.MIAO_PF_2;
         if (position == ghostModeRow) return Flags.MIAO_PF_3;
+        if (position == hideNonContactPhoneRow) return Flags.MIAO_PF_5;
+        if (position == safeDefaultsRow) return Flags.MIAO_PF_6;
         return null;
     }
 
@@ -206,7 +218,17 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setTextAndValueAndCheck(
                                 LocaleController.getString(R.string.MiaoStripTracking),
                                 LocaleController.getString(R.string.MiaoStripTrackingInfo),
-                                Flags.MIAO_UI_7.isEnabled(), true, false);
+                                Flags.MIAO_UI_7.isEnabled(), true, true);
+                    } else if (position == showIdDcRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoShowIdDc),
+                                LocaleController.getString(R.string.MiaoShowIdDcInfo),
+                                Flags.MIAO_UI_8.isEnabled(), true, true);
+                    } else if (position == messageSecondsRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoMessageSeconds),
+                                LocaleController.getString(R.string.MiaoMessageSecondsInfo),
+                                Flags.MIAO_UI_9.isEnabled(), true, false);
                     } else if (position == blockSponsoredRow) {
                         cell.setTextAndValueAndCheck(
                                 LocaleController.getString(R.string.MiaoBlockSponsored),
@@ -221,7 +243,17 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setTextAndValueAndCheck(
                                 LocaleController.getString(R.string.MiaoBypassRestrictions),
                                 LocaleController.getString(R.string.MiaoBypassRestrictionsInfo),
-                                Flags.MIAO_PF_2.isEnabled(), true, false);
+                                Flags.MIAO_PF_2.isEnabled(), true, true);
+                    } else if (position == hideNonContactPhoneRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoHideNonContactPhone),
+                                LocaleController.getString(R.string.MiaoHideNonContactPhoneInfo),
+                                Flags.MIAO_PF_5.isEnabled(), true, true);
+                    } else if (position == safeDefaultsRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoSafeDefaults),
+                                LocaleController.getString(R.string.MiaoSafeDefaultsInfo),
+                                Flags.MIAO_PF_6.isEnabled(), true, false);
                     }
                     break;
                 }

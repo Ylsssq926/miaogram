@@ -652,6 +652,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int userInfoRow;
     private int channelInfoRow;
     private int usernameRow;
+    private int userIdRow; // MIAOGRAM_HOOK: show user id (MIAO_UI_8)
+    private int userDcRow; // MIAOGRAM_HOOK: show user dc (MIAO_UI_8)
     private int notificationsDividerRow;
     private int notificationsRow;
     private int bizHoursRow;
@@ -7394,6 +7396,17 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
             }
             return true;
+        } else if (position == userIdRow) {
+            // MIAOGRAM_HOOK: copy user id to clipboard (MIAO_UI_8)
+            try {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("label", String.valueOf(userId));
+                clipboard.setPrimaryClip(clip);
+                BulletinFactory.of(this).createCopyBulletin(LocaleController.getString(R.string.MiaoUserIdCopied), resourcesProvider).show();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+            return true;
         } else if (position == noteRow) {
 
         } else if (position == phoneRow || position == numberRow) {
@@ -7401,6 +7414,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             final TLRPC.User user = getMessagesController().getUser(userId);
             if (user == null || user.phone == null || user.phone.length() == 0 || getParentActivity() == null) {
+                return false;
+            }
+            // MIAOGRAM_HOOK: suppress copy/call menu for masked non-contact numbers (MIAO_PF_5)
+            if (position == phoneRow && com.miaogram.miao.feature.NonContactPhoneMask.shouldMask(currentAccount, userId, user.bot)) {
                 return false;
             }
 
@@ -10441,6 +10458,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         locationRow = -1;
         channelInfoRow = -1;
         usernameRow = -1;
+        userIdRow = -1; // MIAOGRAM_HOOK (MIAO_UI_8)
+        userDcRow = -1; // MIAOGRAM_HOOK (MIAO_UI_8)
         settingsTimerRow = -1;
         settingsKeyRow = -1;
         notificationsDividerRow = -1;
@@ -10633,6 +10652,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 if (user != null && username != null) {
                     usernameRow = rowCount++;
+                }
+                // MIAOGRAM_HOOK: show user id / dc (MIAO_UI_8)
+                if (user != null && com.miaogram.miao.flags.Flags.MIAO_UI_8.isEnabled()) {
+                    userIdRow = rowCount++;
+                    if (user.photo != null && user.photo.dc_id != 0) {
+                        userDcRow = rowCount++;
+                    }
                 }
                 if (userInfo != null) {
                     if (userInfo.birthday != null) {
@@ -13370,15 +13396,28 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             text = PhoneFormat.getInstance().format("+" + vcardPhone);
                             phoneNumber = vcardPhone;
                         } else if (user != null && !TextUtils.isEmpty(user.phone)) {
-                            text = PhoneFormat.getInstance().format("+" + user.phone);
-                            phoneNumber = user.phone;
+                            // MIAOGRAM_HOOK: mask non-contact phone numbers (MIAO_PF_5)
+                            if (com.miaogram.miao.feature.NonContactPhoneMask.shouldMask(currentAccount, userId, user.bot)) {
+                                text = com.miaogram.miao.feature.NonContactPhoneMask.mask(user.phone);
+                                phoneNumber = null;
+                            } else {
+                                text = PhoneFormat.getInstance().format("+" + user.phone);
+                                phoneNumber = user.phone;
+                            }
                         } else {
                             text = LocaleController.getString(R.string.PhoneHidden);
                             phoneNumber = null;
                         }
                         isFragmentPhoneNumber = phoneNumber != null && phoneNumber.matches("888\\d{8}");
                         detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile), false);
-                    } else if (position == noteRow) {
+                    } else if (position == userIdRow) {
+                        // MIAOGRAM_HOOK: show user id (MIAO_UI_8)
+                        detailCell.setTextAndValue(String.valueOf(userId), LocaleController.getString(R.string.MiaoUserId), userDcRow != -1);
+                    } else if (position == userDcRow) {
+                        // MIAOGRAM_HOOK: show user dc (MIAO_UI_8)
+                        TLRPC.User u = getMessagesController().getUser(userId);
+                        int dc = (u != null && u.photo != null) ? u.photo.dc_id : 0;
+                        detailCell.setTextAndValue(dc > 0 ? ("DC" + dc) : "—", LocaleController.getString(R.string.MiaoUserDc), false);
                         final TLRPC.UserFull userInfo = getMessagesController().getUserFull(userId);
                         if (userInfo == null) return;
                         TLRPC.TL_textWithEntities note = userInfo.note;
@@ -14184,7 +14223,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (position == infoHeaderRow || position == membersHeaderRow || position == settingsSectionRow2 ||
                     position == numberSectionRow || position == helpHeaderRow || position == debugHeaderRow || position == botPermissionsHeader) {
                 return VIEW_TYPE_HEADER;
-            } else if (position == phoneRow || position == locationRow || position == numberRow || position == birthdayRow) {
+            } else if (position == phoneRow || position == locationRow || position == numberRow || position == birthdayRow || position == userIdRow || position == userDcRow) { // MIAOGRAM_HOOK: id/dc rows (MIAO_UI_8)
                 return VIEW_TYPE_TEXT_DETAIL;
             } else if (position == usernameRow || position == setUsernameRow) {
                 return VIEW_TYPE_TEXT_DETAIL_MULTILINE;
@@ -15588,6 +15627,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             put(++pointer, userInfoRow, sparseIntArray);
             put(++pointer, channelInfoRow, sparseIntArray);
             put(++pointer, usernameRow, sparseIntArray);
+            put(++pointer, userIdRow, sparseIntArray); // MIAOGRAM_HOOK (MIAO_UI_8)
+            put(++pointer, userDcRow, sparseIntArray); // MIAOGRAM_HOOK (MIAO_UI_8)
             put(++pointer, notificationsDividerRow, sparseIntArray);
             put(++pointer, reportDividerRow, sparseIntArray);
             put(++pointer, notificationsRow, sparseIntArray);
@@ -16188,7 +16229,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (textToCopy != null) textToCopy = "@" + textToCopy;
             copyButton = getString(R.string.ProfileCopyUsername);
         } else if (position == phoneRow) {
-            textToCopy = user.phone;
+            // MIAOGRAM_HOOK: do not expose masked non-contact numbers via copy (MIAO_PF_5)
+            textToCopy = com.miaogram.miao.feature.NonContactPhoneMask.shouldMask(currentAccount, userId, user != null && user.bot) ? null : user.phone;
         } else if (position == birthdayRow) {
             textToCopy = UserInfoActivity.birthdayString(userInfo.birthday);
         }

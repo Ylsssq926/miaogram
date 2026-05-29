@@ -42,6 +42,15 @@
     <string name="MiaoStreamerModeInfo">Block screenshots and screen recording (restart to apply)</string>
     <string name="MiaoStripTracking">Clean tracking links</string>
     <string name="MiaoStripTrackingInfo">Remove utm_*, fbclid and similar trackers from opened links</string>
+    <string name="MiaoShowIdDc">Show ID and DC on profiles</string>
+    <string name="MiaoShowIdDcInfo">Display the user ID and data center on profile pages</string>
+    <string name="MiaoMessageSeconds">Seconds in message time</string>
+    <string name="MiaoMessageSecondsInfo">Show seconds on message timestamps (may affect small bubbles)</string>
+
+    <!-- Profile id / dc rows -->
+    <string name="MiaoUserId">User ID</string>
+    <string name="MiaoUserDc">Data center</string>
+    <string name="MiaoUserIdCopied">ID copied to clipboard</string>
 
     <!-- Privacy / gray-area section -->
     <string name="MiaoPrivacySectionInfo">Privacy &amp; Extras</string>
@@ -51,6 +60,10 @@
     <string name="MiaoGhostModeInfo">Don\'t send read receipts, typing or online status</string>
     <string name="MiaoBypassRestrictions">Allow saving restricted content</string>
     <string name="MiaoBypassRestrictionsInfo">Enable forward / save / screenshot in restricted chats</string>
+    <string name="MiaoHideNonContactPhone">Hide non-contact numbers</string>
+    <string name="MiaoHideNonContactPhoneInfo">Mask phone numbers of people not in your contacts</string>
+    <string name="MiaoSafeDefaults">Safer delete defaults</string>
+    <string name="MiaoSafeDefaultsInfo">Don\'t pre-check destructive options when blocking or deleting</string>
     <string name="MiaoPrivacySectionHint">These options change how MiaoGram behaves toward Telegram servers and other users. Use at your own discretion.</string>
 
 </resources>

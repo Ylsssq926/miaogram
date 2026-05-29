@@ -18336,11 +18336,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         } else if (currentMessageObject.scheduled && currentMessageObject.messageOwner.date == 0x7FFFFFFE) {
             timeString = "";
         } else if (currentMessageObject.realDate != 0) {
-            timeString = LocaleController.formatSmallDateChat(currentMessageObject.realDate) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (currentMessageObject.realDate) * 1000);
+            timeString = LocaleController.formatSmallDateChat(currentMessageObject.realDate) + ", " + com.miaogram.miao.feature.MessageTimeFormatter.formatter().format((long) (currentMessageObject.realDate) * 1000); // MIAOGRAM_HOOK: optional seconds (MIAO_UI_9)
         } else if (currentMessageObject.isRepostPreview) {
-            timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+            timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + com.miaogram.miao.feature.MessageTimeFormatter.formatter().format((long) (messageObject.messageOwner.date) * 1000); // MIAOGRAM_HOOK: optional seconds (MIAO_UI_9)
         } else if (edited) {
-            timeString = getString(R.string.EditedMessage) + " " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+            timeString = getString(R.string.EditedMessage) + " " + com.miaogram.miao.feature.MessageTimeFormatter.formatter().format((long) (messageObject.messageOwner.date) * 1000); // MIAOGRAM_HOOK: optional seconds (MIAO_UI_9)
         } else if (currentMessageObject.isSaved && currentMessageObject.messageOwner.fwd_from != null && (currentMessageObject.messageOwner.fwd_from.date != 0 || currentMessageObject.messageOwner.fwd_from.saved_date != 0)) {
             int date = currentMessageObject.messageOwner.fwd_from.saved_date;
             if (date == 0) {
@@ -18348,7 +18348,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             }
             timeString = LocaleController.formatSeenDate(date);
         } else {
-            timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+            timeString = com.miaogram.miao.feature.MessageTimeFormatter.formatter().format((long) (messageObject.messageOwner.date) * 1000); // MIAOGRAM_HOOK: optional seconds (MIAO_UI_9)
         }
         if (currentMessageObject.messageOwner.video_processing_pending) {
             timeString = formatString(R.string.ScheduledTimeApprox, timeString);
