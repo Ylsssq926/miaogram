@@ -44,7 +44,7 @@
     <string name="MiaoHideStories">Hide Stories</string>
     <string name="MiaoHideStoriesInfo">Hide the Stories bar at the top of the chat list</string>
     <string name="MiaoStreamerMode">Screenshot protection</string>
-    <string name="MiaoStreamerModeInfo">Block screenshots and screen recording. Restart to apply.</string>
+    <string name="MiaoStreamerModeInfo">Block screenshots and screen recording</string>
     <string name="MiaoStripTracking">Clean tracking links</string>
     <string name="MiaoStripTrackingInfo">Remove utm_*, fbclid and similar trackers from opened links</string>
     <string name="MiaoShowIdDc">Show ID and DC on profiles</string>

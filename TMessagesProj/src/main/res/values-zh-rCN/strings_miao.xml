@@ -40,7 +40,7 @@
     <string name="MiaoHideStories">隐藏快拍</string>
     <string name="MiaoHideStoriesInfo">隐藏对话列表顶部的快拍栏</string>
     <string name="MiaoStreamerMode">截屏保护</string>
-    <string name="MiaoStreamerModeInfo">阻止截屏和录屏。重启后生效。</string>
+    <string name="MiaoStreamerModeInfo">阻止截屏和录屏</string>
     <string name="MiaoStripTracking">清理追踪链接</string>
     <string name="MiaoStripTrackingInfo">打开链接时移除 utm_*、fbclid 等追踪参数</string>
     <string name="MiaoShowIdDc">在资料页显示 ID 和 DC</string>

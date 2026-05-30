@@ -369,6 +369,13 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     private final LiteMode.BatteryReceiver batteryReceiver = new LiteMode.BatteryReceiver();
     private WindowAnimatedInsetsProvider rootAnimatedInsetsListener;
 
+    // MIAOGRAM_HOOK: let settings re-evaluate FLAG_SECURE after toggling screenshot protection (MIAO_UI_6)
+    public void invalidateFlagSecure() {
+        if (flagSecureReason != null) {
+            flagSecureReason.invalidate();
+        }
+    }
+
     public static LaunchActivity instance;
 
     public boolean voipLaunchedInBackground;

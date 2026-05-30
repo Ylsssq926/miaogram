@@ -93,6 +93,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 boolean newValue = !flag.isEnabled();
                 MiaoConfig.setFeatureEnabled(flag, newValue);
                 ((TextCheckCell) view).setChecked(newValue);
+                onFlagToggled(flag);
                 return;
             }
             if (position == keywordsEditRow) {
@@ -119,6 +120,29 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         FrameLayout container = new FrameLayout(context);
         container.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         return container;
+    }
+
+    /**
+     * Applies side effects so toggles take effect without forcing the user to
+     * restart or re-open the chat list, where the upstream consumer only reacts
+     * to a NotificationCenter event.
+     */
+    private void onFlagToggled(Flag flag) {
+        int account = org.telegram.messenger.UserConfig.selectedAccount;
+        if (flag == Flags.MIAO_UI_3) {
+            // Hide "All Chats" tab -> rebuild the folder tabs.
+            org.telegram.messenger.NotificationCenter.getInstance(account)
+                    .postNotificationName(org.telegram.messenger.NotificationCenter.dialogFiltersUpdated);
+        } else if (flag == Flags.MIAO_UI_4) {
+            // Hide Stories -> refresh the stories bar visibility.
+            org.telegram.messenger.NotificationCenter.getInstance(account)
+                    .postNotificationName(org.telegram.messenger.NotificationCenter.storiesUpdated);
+        } else if (flag == Flags.MIAO_UI_6) {
+            // Screenshot protection -> re-evaluate FLAG_SECURE immediately.
+            if (org.telegram.ui.LaunchActivity.instance != null) {
+                org.telegram.ui.LaunchActivity.instance.invalidateFlagSecure();
+            }
+        }
     }
 
     private void buildRows() {
