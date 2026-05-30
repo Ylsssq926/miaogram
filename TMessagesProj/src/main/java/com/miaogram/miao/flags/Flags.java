@@ -38,6 +38,9 @@ public final class Flags {
     /** ac:3 — see .private/flag-mapping.md */
     public static final Flag MIAO_AC_3 = define("miao_ac_3", true, FlagSource.LOCAL);
 
+    /** ac:4 — see .private/flag-mapping.md */
+    public static final Flag MIAO_AC_4 = define("miao_ac_4", true, FlagSource.LOCAL);
+
     // ----- UI domain ----------------------------------------------------------------------------
 
     /** ui:1 — see .private/flag-mapping.md */
@@ -113,7 +116,7 @@ public final class Flags {
     public static void selfCheck() {
         // 1. Verify all known flags are registered.
         Flag[] declared = {
-                MIAO_AC_1, MIAO_AC_2, MIAO_AC_3,
+                MIAO_AC_1, MIAO_AC_2, MIAO_AC_3, MIAO_AC_4,
                 MIAO_UI_1, MIAO_UI_3, MIAO_UI_4, MIAO_UI_5, MIAO_UI_6, MIAO_UI_7, MIAO_UI_8, MIAO_UI_9,
                 MIAO_PF_1, MIAO_PF_2, MIAO_PF_3, MIAO_PF_4, MIAO_PF_5, MIAO_PF_6,
                 MIAO_MS_1,

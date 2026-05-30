@@ -65,6 +65,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
     private int messagesHeaderRow;
     private int keywordMuteRow;
     private int keywordsEditRow;
+    private int channelReaderRow;
     private int messagesInfoRow;
 
     @NonNull
@@ -95,6 +96,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         listView.getAdapter().notifyItemChanged(keywordsEditRow);
                     }
                 });
+                return;
+            }
+            if (position == channelReaderRow) {
+                presentFragment(new com.miaogram.miao.ui.reader.ChannelReaderActivity());
             }
         });
 
@@ -129,6 +134,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         messagesHeaderRow = rowCount++;
         keywordMuteRow = rowCount++;
         keywordsEditRow = rowCount++;
+        channelReaderRow = rowCount++;
         messagesInfoRow = rowCount++;
     }
 
@@ -186,7 +192,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                     || position == messagesHeaderRow) {
                 return TYPE_HEADER;
             }
-            if (position == keywordsEditRow) {
+            if (position == keywordsEditRow || position == channelReaderRow) {
                 return TYPE_SETTINGS;
             }
             return TYPE_INFO;
@@ -313,7 +319,9 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                                 : LocaleController.formatString(R.string.MiaoKeywordsCount, n);
                         cell.setTextAndValue(
                                 LocaleController.getString(R.string.MiaoKeywords),
-                                value, false);
+                                value, true);
+                    } else if (position == channelReaderRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoChannelReaderEntry), false);
                     }
                     break;
                 }

@@ -83,4 +83,17 @@
     <string name="MiaoUnifiedMentions">Mentions</string>
     <string name="MiaoUnifiedEmpty">Nothing unread across your accounts</string>
 
+    <!-- Channel reader -->
+    <string name="MiaoChannelReader">Channel reader</string>
+    <string name="MiaoChannelReaderEntry">Channel reader</string>
+    <string name="MiaoChannelReaderEntryInfo">Group channels by reading priority</string>
+    <string name="MiaoChannelReaderEmpty">No channels to organize yet</string>
+    <string name="MiaoChannelMustRead">Must read</string>
+    <string name="MiaoChannelScan">Skim</string>
+    <string name="MiaoChannelArchived">Archived</string>
+    <string name="MiaoChannelUngraded">Other channels</string>
+    <string name="MiaoChannelSetLevel">Set reading priority</string>
+    <string name="MiaoChannelExpand">Expand</string>
+    <string name="MiaoChannelCollapse">Collapse</string>
+
 </resources>
