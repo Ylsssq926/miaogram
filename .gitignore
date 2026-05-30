@@ -1,6 +1,11 @@
 # Sensitive files - NEVER commit these
 .private/
 
+# Working icon source images dropped in the repo root (kept under .private/assets)
+/miaogram_icon_*.png
+/*.jpg
+/*.jpeg
+
 # API keys
 *.properties
 local.properties

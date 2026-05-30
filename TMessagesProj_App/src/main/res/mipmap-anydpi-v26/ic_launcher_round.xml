@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MiaoGram adaptive launcher icon, round variant (overrides upstream). -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/miao_icon_background" />
+    <foreground android:drawable="@mipmap/icon_foreground_round" />
+    <monochrome android:drawable="@mipmap/icon_monochrome" />
+</adaptive-icon>
