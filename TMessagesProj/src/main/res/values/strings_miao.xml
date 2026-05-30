@@ -17,13 +17,17 @@
 
     <!-- Settings page -->
     <string name="MiaoSettings">MiaoGram Settings</string>
-    <string name="MiaoSettingsComingSoon">More options will land here in upcoming releases.</string>
+
+    <!-- Features (brand) section -->
+    <string name="MiaoFeaturesSectionInfo">MiaoGram features</string>
+    <string name="MiaoFeaturesSectionHint">Exclusive tools that set MiaoGram apart from the standard client.</string>
+    <string name="MiaoUnifiedInboxEntryInfo">All accounts\' unread in one place</string>
 
     <!-- Account section -->
     <string name="MiaoAccountSectionInfo">Account</string>
     <string name="MiaoMaxAccounts">More accounts</string>
     <string name="MiaoMaxAccountsInfo">Allow up to 10 logged-in accounts</string>
-    <string name="MiaoMaxAccountsHint">When enabled, you can add up to 10 accounts instead of the default 4. Restart the app after toggling.</string>
+    <string name="MiaoMaxAccountsHint">Lets you add up to 10 accounts instead of the default 4. Restart the app after turning this on or off.</string>
     <string name="MiaoAccountRemarkTitle">Account remark</string>
     <string name="MiaoAccountRemark">Account remarks</string>
     <string name="MiaoAccountRemarkInfo">Long-press an account to set a local nickname</string>
@@ -36,16 +40,17 @@
 
     <!-- Interface section -->
     <string name="MiaoInterfaceSectionInfo">Interface</string>
+    <string name="MiaoInterfaceSectionHint">These options only affect how things look on this device.</string>
     <string name="MiaoHideStories">Hide Stories</string>
     <string name="MiaoHideStoriesInfo">Hide the Stories bar at the top of the chat list</string>
     <string name="MiaoStreamerMode">Screenshot protection</string>
-    <string name="MiaoStreamerModeInfo">Block screenshots and screen recording (restart to apply)</string>
+    <string name="MiaoStreamerModeInfo">Block screenshots and screen recording. Restart to apply.</string>
     <string name="MiaoStripTracking">Clean tracking links</string>
     <string name="MiaoStripTrackingInfo">Remove utm_*, fbclid and similar trackers from opened links</string>
     <string name="MiaoShowIdDc">Show ID and DC on profiles</string>
     <string name="MiaoShowIdDcInfo">Display the user ID and data center on profile pages</string>
     <string name="MiaoMessageSeconds">Seconds in message time</string>
-    <string name="MiaoMessageSecondsInfo">Show seconds on message timestamps (may affect small bubbles)</string>
+    <string name="MiaoMessageSecondsInfo">Show seconds on message timestamps. May change the layout of small bubbles.</string>
 
     <!-- Profile id / dc rows -->
     <string name="MiaoUserId">User ID</string>
@@ -57,13 +62,13 @@
     <string name="MiaoBlockSponsored">Hide sponsored messages</string>
     <string name="MiaoBlockSponsoredInfo">Don\'t show channel ads</string>
     <string name="MiaoGhostMode">Ghost mode</string>
-    <string name="MiaoGhostModeInfo">Don\'t send read receipts, typing or online status</string>
+    <string name="MiaoGhostModeInfo">Don\'t send read receipts, typing status or online status</string>
     <string name="MiaoBypassRestrictions">Allow saving restricted content</string>
-    <string name="MiaoBypassRestrictionsInfo">Enable forward / save / screenshot in restricted chats</string>
+    <string name="MiaoBypassRestrictionsInfo">Allow forwarding, saving and screenshots in restricted chats</string>
     <string name="MiaoHideNonContactPhone">Hide non-contact numbers</string>
     <string name="MiaoHideNonContactPhoneInfo">Mask phone numbers of people not in your contacts</string>
-    <string name="MiaoSafeDefaults">Safer delete defaults</string>
-    <string name="MiaoSafeDefaultsInfo">Don\'t pre-check destructive options when blocking or deleting</string>
+    <string name="MiaoSafeDefaults">Confirm before destructive actions</string>
+    <string name="MiaoSafeDefaultsInfo">Destructive options stay unchecked by default in block and delete dialogs</string>
     <string name="MiaoPrivacySectionHint">These options change how MiaoGram behaves toward Telegram servers and other users. Use at your own discretion.</string>
 
     <!-- Messages section -->
@@ -74,26 +79,42 @@
     <string name="MiaoKeywordsInfo">One keyword per line. Messages containing any of them won\'t notify you.</string>
     <string name="MiaoKeywordsHint">word or phrase</string>
     <string name="MiaoKeywordsNone">None set</string>
-    <string name="MiaoKeywordsCount">%1$d keyword(s)</string>
+    <string name="MiaoKeywordsCount_one">%1$d keyword</string>
+    <string name="MiaoKeywordsCount_other">%1$d keywords</string>
     <string name="MiaoMessagesSectionHint">Keyword muting only hides notifications. Messages still appear in chats and unread counts are unchanged.</string>
 
     <!-- Unified cross-account inbox -->
     <string name="MiaoUnifiedInbox">Unified inbox</string>
     <string name="MiaoUnifiedUnread">Unread</string>
     <string name="MiaoUnifiedMentions">Mentions</string>
-    <string name="MiaoUnifiedEmpty">Nothing unread across your accounts</string>
+    <string name="MiaoUnifiedEmptyTitle">All caught up</string>
+    <string name="MiaoUnifiedEmpty">Unread chats from every account you\'re logged into will show up here.</string>
 
     <!-- Channel reader -->
     <string name="MiaoChannelReader">Channel reader</string>
     <string name="MiaoChannelReaderEntry">Channel reader</string>
     <string name="MiaoChannelReaderEntryInfo">Group channels by reading priority</string>
-    <string name="MiaoChannelReaderEmpty">No channels to organize yet</string>
+    <string name="MiaoChannelReaderEmptyTitle">No channels yet</string>
+    <string name="MiaoChannelReaderEmpty">Channels you join will appear here, ready to be grouped by priority.</string>
+    <string name="MiaoChannelReaderDisabled">Channel reader is turned off. Enable it in MiaoGram settings.</string>
+    <string name="MiaoChannelReaderHint">Long-press a channel to set its reading priority.</string>
     <string name="MiaoChannelMustRead">Must read</string>
-    <string name="MiaoChannelScan">Skim</string>
+    <string name="MiaoChannelScan">Catch up</string>
     <string name="MiaoChannelArchived">Archived</string>
     <string name="MiaoChannelUngraded">Other channels</string>
     <string name="MiaoChannelSetLevel">Set reading priority</string>
     <string name="MiaoChannelExpand">Expand</string>
     <string name="MiaoChannelCollapse">Collapse</string>
+    <string name="MiaoChannelSectionCount">%1$s (%2$d)</string>
+
+    <!-- About page -->
+    <string name="MiaoAbout">About MiaoGram</string>
+    <string name="MiaoAboutVersion">Version %1$s (%2$d)</string>
+    <string name="MiaoAboutUnofficial">MiaoGram is an unofficial Telegram client. It is not affiliated with, endorsed by, or connected to Telegram.</string>
+    <string name="MiaoAboutPoweredBy">Powered by the Telegram API. \"Telegram\" is a trademark of Telegram FZ-LLC.</string>
+    <string name="MiaoAboutLicense">Licensed under the GNU General Public License v2 or later.</string>
+    <string name="MiaoAboutSource">Source code</string>
+    <string name="MiaoAboutCopyVersion">Copy version</string>
+    <string name="MiaoAboutVersionCopied">Version copied to clipboard</string>
 
 </resources>

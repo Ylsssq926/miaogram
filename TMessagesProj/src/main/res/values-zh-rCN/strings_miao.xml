@@ -13,13 +13,17 @@
 
     <!-- Settings page -->
     <string name="MiaoSettings">MiaoGram 设置</string>
-    <string name="MiaoSettingsComingSoon">更多选项将在后续版本中加入。</string>
+
+    <!-- Features (brand) section -->
+    <string name="MiaoFeaturesSectionInfo">MiaoGram 功能</string>
+    <string name="MiaoFeaturesSectionHint">让 MiaoGram 区别于普通客户端的专属功能。</string>
+    <string name="MiaoUnifiedInboxEntryInfo">所有账户的未读集中一处</string>
 
     <!-- Account section -->
     <string name="MiaoAccountSectionInfo">账户</string>
     <string name="MiaoMaxAccounts">更多账户</string>
     <string name="MiaoMaxAccountsInfo">最多可登录 10 个账户</string>
-    <string name="MiaoMaxAccountsHint">开启后，可添加最多 10 个账户（默认 4 个）。切换后需重启应用生效。</string>
+    <string name="MiaoMaxAccountsHint">可添加最多 10 个账户（默认 4 个）。开启或关闭后需要重启应用才能生效。</string>
     <string name="MiaoAccountRemarkTitle">账户备注</string>
     <string name="MiaoAccountRemark">账户备注</string>
     <string name="MiaoAccountRemarkInfo">长按账户可设置本地昵称</string>
@@ -32,16 +36,17 @@
 
     <!-- Interface section -->
     <string name="MiaoInterfaceSectionInfo">界面</string>
+    <string name="MiaoInterfaceSectionHint">这些选项只影响本设备上的显示效果。</string>
     <string name="MiaoHideStories">隐藏快拍</string>
     <string name="MiaoHideStoriesInfo">隐藏对话列表顶部的快拍栏</string>
     <string name="MiaoStreamerMode">截屏保护</string>
-    <string name="MiaoStreamerModeInfo">阻止截屏和录屏（重启后生效）</string>
+    <string name="MiaoStreamerModeInfo">阻止截屏和录屏。重启后生效。</string>
     <string name="MiaoStripTracking">清理追踪链接</string>
     <string name="MiaoStripTrackingInfo">打开链接时移除 utm_*、fbclid 等追踪参数</string>
     <string name="MiaoShowIdDc">在资料页显示 ID 和 DC</string>
     <string name="MiaoShowIdDcInfo">在用户资料页显示用户 ID 和数据中心</string>
     <string name="MiaoMessageSeconds">消息时间显示秒</string>
-    <string name="MiaoMessageSecondsInfo">在消息时间戳中显示秒（可能影响小气泡布局）</string>
+    <string name="MiaoMessageSecondsInfo">消息时间戳显示到秒，可能改变小消息气泡的换行。</string>
 
     <!-- Profile id / dc rows -->
     <string name="MiaoUserId">用户 ID</string>
@@ -53,13 +58,13 @@
     <string name="MiaoBlockSponsored">隐藏赞助消息</string>
     <string name="MiaoBlockSponsoredInfo">不显示频道广告</string>
     <string name="MiaoGhostMode">幽灵模式</string>
-    <string name="MiaoGhostModeInfo">不发送已读回执、正在输入和在线状态</string>
+    <string name="MiaoGhostModeInfo">不发送已读回执、“正在输入”状态和在线状态</string>
     <string name="MiaoBypassRestrictions">允许保存受限内容</string>
-    <string name="MiaoBypassRestrictionsInfo">在受限对话中启用转发／保存／截屏</string>
+    <string name="MiaoBypassRestrictionsInfo">允许在受限对话中转发、保存内容并截屏</string>
     <string name="MiaoHideNonContactPhone">隐藏非联系人号码</string>
     <string name="MiaoHideNonContactPhoneInfo">对不在通讯录中的人隐藏手机号</string>
-    <string name="MiaoSafeDefaults">更安全的删除默认值</string>
-    <string name="MiaoSafeDefaultsInfo">屏蔽或删除时不默认勾选有破坏性的选项</string>
+    <string name="MiaoSafeDefaults">操作前先确认</string>
+    <string name="MiaoSafeDefaultsInfo">屏蔽或删除对话时，默认不勾选有破坏性的选项</string>
     <string name="MiaoPrivacySectionHint">这些选项会改变 MiaoGram 对 Telegram 服务器和其他用户的行为，请自行斟酌使用。</string>
 
     <!-- Messages section -->
@@ -70,26 +75,41 @@
     <string name="MiaoKeywordsInfo">每行一个关键词。含有其中任意一个的消息不会通知你。</string>
     <string name="MiaoKeywordsHint">词语或短语</string>
     <string name="MiaoKeywordsNone">未设置</string>
-    <string name="MiaoKeywordsCount">%1$d 个关键词</string>
+    <string name="MiaoKeywordsCount_other">%1$d 个关键词</string>
     <string name="MiaoMessagesSectionHint">关键词静默只隐藏通知。消息仍会出现在对话中，未读数也不变。</string>
 
     <!-- Unified cross-account inbox -->
     <string name="MiaoUnifiedInbox">聚合收件箱</string>
     <string name="MiaoUnifiedUnread">未读</string>
     <string name="MiaoUnifiedMentions">提及</string>
-    <string name="MiaoUnifiedEmpty">所有账户都没有未读消息</string>
+    <string name="MiaoUnifiedEmptyTitle">全部已读</string>
+    <string name="MiaoUnifiedEmpty">你登录的所有账户的未读对话都会显示在这里。</string>
 
     <!-- Channel reader -->
     <string name="MiaoChannelReader">频道阅读器</string>
     <string name="MiaoChannelReaderEntry">频道阅读器</string>
     <string name="MiaoChannelReaderEntryInfo">按阅读优先级对频道分组</string>
-    <string name="MiaoChannelReaderEmpty">暂无可整理的频道</string>
+    <string name="MiaoChannelReaderEmptyTitle">还没有频道</string>
+    <string name="MiaoChannelReaderEmpty">你加入的频道会显示在这里，可按优先级分组整理。</string>
+    <string name="MiaoChannelReaderDisabled">频道阅读器已关闭。可在 MiaoGram 设置中开启。</string>
+    <string name="MiaoChannelReaderHint">长按频道可设置它的阅读优先级。</string>
     <string name="MiaoChannelMustRead">必读</string>
-    <string name="MiaoChannelScan">速览</string>
+    <string name="MiaoChannelScan">稍后看</string>
     <string name="MiaoChannelArchived">已归档</string>
     <string name="MiaoChannelUngraded">其他频道</string>
     <string name="MiaoChannelSetLevel">设置阅读优先级</string>
     <string name="MiaoChannelExpand">展开</string>
     <string name="MiaoChannelCollapse">收起</string>
+    <string name="MiaoChannelSectionCount">%1$s (%2$d)</string>
+
+    <!-- About page -->
+    <string name="MiaoAbout">关于 MiaoGram</string>
+    <string name="MiaoAboutVersion">版本 %1$s (%2$d)</string>
+    <string name="MiaoAboutUnofficial">MiaoGram 是非官方的 Telegram 客户端，与 Telegram 没有任何隶属、认可或关联关系。</string>
+    <string name="MiaoAboutPoweredBy">基于 Telegram API 构建。“Telegram”是 Telegram FZ-LLC 的商标。</string>
+    <string name="MiaoAboutLicense">依据 GNU 通用公共许可证 v2 或更高版本授权。</string>
+    <string name="MiaoAboutSource">源代码</string>
+    <string name="MiaoAboutCopyVersion">复制版本号</string>
+    <string name="MiaoAboutVersionCopied">已复制版本号到剪贴板</string>
 
 </resources>

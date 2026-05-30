@@ -24,13 +24,13 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.miaogram.miao.feature.unified.UnifiedInboxCollector;
 import com.miaogram.miao.feature.unified.UnifiedInboxEntry;
+import com.miaogram.miao.ui.common.MiaoEmptyView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.DialogObject;
@@ -63,7 +63,7 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
 
     private RecyclerListView listView;
     private ListAdapter adapter;
-    private TextView emptyView;
+    private FrameLayout emptyContainer;
     private ScrollSlidingTextTabStrip tabStrip;
 
     private final List<UnifiedInboxEntry> entries = new ArrayList<>();
@@ -155,13 +155,14 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
 
         frameLayout.addView(tabStrip, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 44, Gravity.TOP));
 
-        emptyView = new TextView(context);
-        emptyView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        emptyView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 15);
-        emptyView.setGravity(Gravity.CENTER);
-        emptyView.setText(LocaleController.getString(R.string.MiaoUnifiedEmpty));
-        emptyView.setVisibility(View.GONE);
-        frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, 44, 0, 0));
+        // 1dp divider under the tab strip to avoid the tabs/list floating apart.
+        View tabDivider = new View(context);
+        tabDivider.setBackgroundColor(Theme.getColor(Theme.key_divider));
+        frameLayout.addView(tabDivider, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 1f / AndroidUtilities.density, Gravity.TOP, 0, 44, 0, 0));
+
+        emptyContainer = new FrameLayout(context);
+        emptyContainer.setVisibility(View.GONE);
+        frameLayout.addView(emptyContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, 44, 0, 0));
 
         listView = new RecyclerListView(context);
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
@@ -190,8 +191,18 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
-        if (emptyView != null) {
-            emptyView.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
+        if (emptyContainer != null) {
+            boolean showEmpty = entries.isEmpty();
+            emptyContainer.setVisibility(showEmpty ? View.VISIBLE : View.GONE);
+            if (showEmpty) {
+                emptyContainer.removeAllViews();
+                emptyContainer.addView(MiaoEmptyView.create(
+                        getParentActivity() != null ? getParentActivity() : emptyContainer.getContext(),
+                        R.drawable.msg_discussion,
+                        LocaleController.getString(R.string.MiaoUnifiedEmptyTitle),
+                        LocaleController.getString(R.string.MiaoUnifiedEmpty)),
+                        LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
+            }
         }
     }
 

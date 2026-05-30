@@ -31,6 +31,7 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
+import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
@@ -41,6 +42,11 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
 
     // Row ids
     private int rowCount;
+    private int brandHeaderRow;
+    private int unifiedInboxNavRow;
+    private int channelReaderNavRow;
+    private int aboutNavRow;
+    private int brandInfoRow;
     private int accountHeaderRow;
     private int maxAccountsRow;
     private int accountRemarkRow;
@@ -65,7 +71,6 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
     private int messagesHeaderRow;
     private int keywordMuteRow;
     private int keywordsEditRow;
-    private int channelReaderRow;
     private int messagesInfoRow;
 
     @NonNull
@@ -98,8 +103,16 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 });
                 return;
             }
-            if (position == channelReaderRow) {
+            if (position == unifiedInboxNavRow) {
+                presentFragment(new com.miaogram.miao.ui.unified.UnifiedInboxActivity());
+                return;
+            }
+            if (position == channelReaderNavRow) {
                 presentFragment(new com.miaogram.miao.ui.reader.ChannelReaderActivity());
+                return;
+            }
+            if (position == aboutNavRow) {
+                presentFragment(new com.miaogram.miao.ui.about.MiaoAboutActivity());
             }
         });
 
@@ -110,6 +123,11 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
 
     private void buildRows() {
         rowCount = 0;
+        brandHeaderRow = rowCount++;
+        unifiedInboxNavRow = rowCount++;
+        channelReaderNavRow = rowCount++;
+        aboutNavRow = rowCount++;
+        brandInfoRow = rowCount++;
         accountHeaderRow = rowCount++;
         maxAccountsRow = rowCount++;
         accountRemarkRow = rowCount++;
@@ -134,7 +152,6 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         messagesHeaderRow = rowCount++;
         keywordMuteRow = rowCount++;
         keywordsEditRow = rowCount++;
-        channelReaderRow = rowCount++;
         messagesInfoRow = rowCount++;
     }
 
@@ -164,6 +181,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         private static final int TYPE_INFO = 1;
         private static final int TYPE_HEADER = 2;
         private static final int TYPE_SETTINGS = 3;
+        private static final int TYPE_NAV = 4;
 
         private final Context context;
 
@@ -174,7 +192,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
             int type = holder.getItemViewType();
-            return type == TYPE_CHECK || type == TYPE_SETTINGS;
+            return type == TYPE_CHECK || type == TYPE_SETTINGS || type == TYPE_NAV;
         }
 
         @Override
@@ -189,10 +207,14 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
             }
             if (position == accountHeaderRow || position == folderHeaderRow
                     || position == interfaceHeaderRow || position == privacyHeaderRow
-                    || position == messagesHeaderRow) {
+                    || position == messagesHeaderRow || position == brandHeaderRow) {
                 return TYPE_HEADER;
             }
-            if (position == keywordsEditRow || position == channelReaderRow) {
+            if (position == unifiedInboxNavRow || position == channelReaderNavRow
+                    || position == aboutNavRow) {
+                return TYPE_NAV;
+            }
+            if (position == keywordsEditRow) {
                 return TYPE_SETTINGS;
             }
             return TYPE_INFO;
@@ -210,6 +232,9 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             } else if (viewType == TYPE_SETTINGS) {
                 view = new TextSettingsCell(context);
+                view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            } else if (viewType == TYPE_NAV) {
+                view = new TextCell(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             } else {
                 view = new TextInfoPrivacyCell(context);
@@ -297,7 +322,9 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 }
                 case TYPE_HEADER: {
                     HeaderCell cell = (HeaderCell) holder.itemView;
-                    if (position == accountHeaderRow) {
+                    if (position == brandHeaderRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoFeaturesSectionInfo));
+                    } else if (position == accountHeaderRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoAccountSectionInfo));
                     } else if (position == folderHeaderRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoFolderSectionInfo));
@@ -310,29 +337,48 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                     }
                     break;
                 }
+                case TYPE_NAV: {
+                    TextCell cell = (TextCell) holder.itemView;
+                    if (position == unifiedInboxNavRow) {
+                        cell.setTextAndValueAndIcon(
+                                LocaleController.getString(R.string.MiaoUnifiedInbox),
+                                LocaleController.getString(R.string.MiaoUnifiedInboxEntryInfo),
+                                R.drawable.msg_discussion, true);
+                    } else if (position == channelReaderNavRow) {
+                        cell.setTextAndValueAndIcon(
+                                LocaleController.getString(R.string.MiaoChannelReaderEntry),
+                                LocaleController.getString(R.string.MiaoChannelReaderEntryInfo),
+                                R.drawable.msg_folders, true);
+                    } else if (position == aboutNavRow) {
+                        cell.setTextAndIcon(
+                                LocaleController.getString(R.string.MiaoAbout),
+                                R.drawable.msg_info, false);
+                    }
+                    break;
+                }
                 case TYPE_SETTINGS: {
                     TextSettingsCell cell = (TextSettingsCell) holder.itemView;
                     if (position == keywordsEditRow) {
                         int n = com.miaogram.miao.feature.KeywordFilter.count();
                         String value = n == 0
                                 ? LocaleController.getString(R.string.MiaoKeywordsNone)
-                                : LocaleController.formatString(R.string.MiaoKeywordsCount, n);
+                                : LocaleController.formatPluralString("MiaoKeywordsCount", n);
                         cell.setTextAndValue(
                                 LocaleController.getString(R.string.MiaoKeywords),
                                 value, true);
-                    } else if (position == channelReaderRow) {
-                        cell.setText(LocaleController.getString(R.string.MiaoChannelReaderEntry), false);
                     }
                     break;
                 }
                 default: {
                     TextInfoPrivacyCell cell = (TextInfoPrivacyCell) holder.itemView;
-                    if (position == accountInfoRow) {
+                    if (position == brandInfoRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoFeaturesSectionHint));
+                    } else if (position == accountInfoRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoMaxAccountsHint));
                     } else if (position == folderInfoRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoHideAllChatsHint));
                     } else if (position == interfaceInfoRow) {
-                        cell.setText("");
+                        cell.setText(LocaleController.getString(R.string.MiaoInterfaceSectionHint));
                     } else if (position == privacyInfoRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoPrivacySectionHint));
                     } else if (position == messagesInfoRow) {

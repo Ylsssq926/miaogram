@@ -22,13 +22,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.miaogram.miao.feature.reader.ChannelGrading;
 import com.miaogram.miao.feature.reader.ChannelReaderCollector;
+import com.miaogram.miao.ui.common.MiaoEmptyView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -62,7 +62,7 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
 
     private RecyclerListView listView;
     private ListAdapter adapter;
-    private TextView emptyView;
+    private FrameLayout emptyContainer;
 
     private ChannelReaderCollector.Result data;
     private final List<Row> rows = new ArrayList<>();
@@ -123,6 +123,7 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setAllowOverlayTitle(true);
         actionBar.setTitle(LocaleController.getString(R.string.MiaoChannelReader));
+        actionBar.setSubtitle(LocaleController.getString(R.string.MiaoChannelReaderHint));
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
@@ -136,13 +137,9 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
         frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
         fragmentView = frameLayout;
 
-        emptyView = new TextView(context);
-        emptyView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        emptyView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 15);
-        emptyView.setGravity(Gravity.CENTER);
-        emptyView.setText(LocaleController.getString(R.string.MiaoChannelReaderEmpty));
-        emptyView.setVisibility(View.GONE);
-        frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
+        emptyContainer = new FrameLayout(context);
+        emptyContainer.setVisibility(View.GONE);
+        frameLayout.addView(emptyContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
 
         listView = new RecyclerListView(context);
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
@@ -192,7 +189,8 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
     }
 
     private void reload() {
-        if (ChannelReaderCollector.isEnabled()) {
+        boolean enabled = ChannelReaderCollector.isEnabled();
+        if (enabled) {
             data = ChannelReaderCollector.collect(currentAccount);
         } else {
             data = null;
@@ -201,8 +199,24 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
-        if (emptyView != null) {
-            emptyView.setVisibility(rows.isEmpty() ? View.VISIBLE : View.GONE);
+        if (emptyContainer != null) {
+            boolean showEmpty = rows.isEmpty();
+            emptyContainer.setVisibility(showEmpty ? View.VISIBLE : View.GONE);
+            if (showEmpty) {
+                emptyContainer.removeAllViews();
+                CharSequence title;
+                CharSequence subtitle;
+                if (!enabled) {
+                    title = LocaleController.getString(R.string.MiaoChannelReader);
+                    subtitle = LocaleController.getString(R.string.MiaoChannelReaderDisabled);
+                } else {
+                    title = LocaleController.getString(R.string.MiaoChannelReaderEmptyTitle);
+                    subtitle = LocaleController.getString(R.string.MiaoChannelReaderEmpty);
+                }
+                emptyContainer.addView(MiaoEmptyView.create(getParentActivity() != null ? getParentActivity() : emptyContainer.getContext(),
+                        R.drawable.msg_folders, title, subtitle),
+                        LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
+            }
         }
     }
 
@@ -225,7 +239,8 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
         if (items.isEmpty()) {
             return;
         }
-        rows.add(Row.section(level, title + "  (" + items.size() + ")"));
+        rows.add(Row.section(level, LocaleController.formatString(
+                R.string.MiaoChannelSectionCount, title, items.size())));
         if (!collapsed) {
             for (int i = 0; i < items.size(); i++) {
                 rows.add(Row.channel(items.get(i)));
