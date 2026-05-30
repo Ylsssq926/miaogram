@@ -77,4 +77,10 @@
     <string name="MiaoKeywordsCount">%1$d keyword(s)</string>
     <string name="MiaoMessagesSectionHint">Keyword muting only hides notifications. Messages still appear in chats and unread counts are unchanged.</string>
 
+    <!-- Unified cross-account inbox -->
+    <string name="MiaoUnifiedInbox">Unified inbox</string>
+    <string name="MiaoUnifiedUnread">Unread</string>
+    <string name="MiaoUnifiedMentions">Mentions</string>
+    <string name="MiaoUnifiedEmpty">Nothing unread across your accounts</string>
+
 </resources>

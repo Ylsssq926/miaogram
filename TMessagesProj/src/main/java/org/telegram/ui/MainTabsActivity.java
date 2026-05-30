@@ -479,6 +479,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         });
 
         ItemOptions o = ItemOptions.makeOptions(this, button);
+        // MIAOGRAM_HOOK: unified cross-account inbox entry (MIAO_AC_3)
+        if (com.miaogram.miao.feature.unified.UnifiedInboxCollector.isEnabled() && accountNumbers.size() >= 2) {
+            o.add(R.drawable.msg_folders, getString(R.string.MiaoUnifiedInbox), () -> {
+                presentFragment(new com.miaogram.miao.ui.unified.UnifiedInboxActivity());
+            });
+            o.addGap();
+        }
         if (UserConfig.getActivatedAccountsCount() < com.miaogram.miao.account.MaxAccountsOverride.getEffectiveMax()) { // MIAOGRAM_HOOK
             o.add(R.drawable.msg_addbot, getString(R.string.AddAccount), () -> {
                 int freeAccounts = 0;

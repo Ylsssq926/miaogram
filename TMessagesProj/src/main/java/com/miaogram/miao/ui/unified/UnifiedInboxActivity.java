@@ -1,0 +1,275 @@
+/*
+ * MiaoGram custom code.
+ * Cross-account "Unified Inbox" screen (MIAO_AC_3).
+ *
+ * MiaoGram's flagship differentiator: built on top of the already-raised
+ * account limit, this screen merges the unread conversations (and, in a second
+ * tab, the @-mentions) of EVERY logged-in account into a single list. Tapping a
+ * row switches to the owning account and opens that chat.
+ *
+ * Design notes:
+ *   - Pure read-only aggregation via UnifiedInboxCollector; no server calls,
+ *     no mutation of account state.
+ *   - Rows are rendered with upstream DialogCell using its 6-arg constructor so
+ *     the per-account avatar / unread badge / draft / typing rendering is reused
+ *     for free. The cell's account is set explicitly per row.
+ *   - Cross-account navigation follows the upstream pattern used by notification
+ *     intents: switchToAccount(account, true) then present ChatActivity on the
+ *     fresh stack.
+ */
+package com.miaogram.miao.ui.unified;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.miaogram.miao.feature.unified.UnifiedInboxCollector;
+import com.miaogram.miao.feature.unified.UnifiedInboxEntry;
+
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.DialogObject;
+import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.NotificationCenter;
+import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
+import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.ActionBar;
+import org.telegram.ui.ActionBar.BaseFragment;
+import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ChatActivity;
+import org.telegram.ui.Cells.DialogCell;
+import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.ScrollSlidingTextTabStrip;
+import org.telegram.ui.DialogsActivity;
+import org.telegram.ui.LaunchActivity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class UnifiedInboxActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
+
+    private static final int TAB_UNREAD = 0;
+    private static final int TAB_MENTIONS = 1;
+
+    private int currentMode = UnifiedInboxCollector.MODE_UNREAD;
+
+    private RecyclerListView listView;
+    private ListAdapter adapter;
+    private TextView emptyView;
+    private ScrollSlidingTextTabStrip tabStrip;
+
+    private final List<UnifiedInboxEntry> entries = new ArrayList<>();
+
+    private final int[] observedEvents = {
+            NotificationCenter.dialogsNeedReload,
+            NotificationCenter.updateInterfaces,
+            NotificationCenter.dialogsUnreadCounterChanged,
+            NotificationCenter.notificationsCountUpdated,
+    };
+
+    @Override
+    public boolean onFragmentCreate() {
+        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+            if (!UserConfig.getInstance(a).isClientActivated()) {
+                continue;
+            }
+            NotificationCenter nc = NotificationCenter.getInstance(a);
+            for (int event : observedEvents) {
+                nc.addObserver(this, event);
+            }
+        }
+        return super.onFragmentCreate();
+    }
+
+    @Override
+    public void onFragmentDestroy() {
+        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+            NotificationCenter nc = NotificationCenter.getInstance(a);
+            for (int event : observedEvents) {
+                nc.removeObserver(this, event);
+            }
+        }
+        super.onFragmentDestroy();
+    }
+
+    @Override
+    public View createView(Context context) {
+        actionBar.setBackButtonImage(R.drawable.ic_ab_back);
+        actionBar.setAllowOverlayTitle(true);
+        actionBar.setTitle(LocaleController.getString(R.string.MiaoUnifiedInbox));
+        actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+            @Override
+            public void onItemClick(int id) {
+                if (id == -1) {
+                    finishFragment();
+                }
+            }
+        });
+
+        tabStrip = new ScrollSlidingTextTabStrip(context, null);
+        tabStrip.setUseSameWidth(true);
+        tabStrip.addTextTab(TAB_UNREAD, LocaleController.getString(R.string.MiaoUnifiedUnread));
+        tabStrip.addTextTab(TAB_MENTIONS, LocaleController.getString(R.string.MiaoUnifiedMentions));
+        tabStrip.finishAddingTabs();
+        tabStrip.setDelegate(new ScrollSlidingTextTabStrip.ScrollSlidingTabStripDelegate() {
+            @Override
+            public void onPageSelected(int page, boolean forward) {
+                currentMode = (page == TAB_MENTIONS) ? UnifiedInboxCollector.MODE_MENTIONS : UnifiedInboxCollector.MODE_UNREAD;
+                reload();
+            }
+
+            @Override
+            public void onPageScrolled(float progress) {
+            }
+
+            @Override
+            public void onSamePageSelected() {
+            }
+        });
+
+        FrameLayout frameLayout = new FrameLayout(context);
+        frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+        fragmentView = frameLayout;
+
+        frameLayout.addView(tabStrip, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 44, Gravity.TOP));
+
+        emptyView = new TextView(context);
+        emptyView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        emptyView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 15);
+        emptyView.setGravity(Gravity.CENTER);
+        emptyView.setText(LocaleController.getString(R.string.MiaoUnifiedEmpty));
+        emptyView.setVisibility(View.GONE);
+        frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, 44, 0, 0));
+
+        listView = new RecyclerListView(context);
+        listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        listView.setVerticalScrollBarEnabled(false);
+        adapter = new ListAdapter(context);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener((view, position) -> {
+            if (position < 0 || position >= entries.size()) {
+                return;
+            }
+            openEntry(entries.get(position));
+        });
+        frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP, 0, 44, 0, 0));
+
+        reload();
+        return fragmentView;
+    }
+
+    private void reload() {
+        entries.clear();
+        if (UnifiedInboxCollector.isEnabled()) {
+            entries.addAll(UnifiedInboxCollector.collect(currentMode));
+        }
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+        if (emptyView != null) {
+            emptyView.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void openEntry(UnifiedInboxEntry entry) {
+        if (entry == null || entry.dialog == null) {
+            return;
+        }
+        final int account = entry.account;
+        final long dialogId = entry.dialog.id;
+
+        Bundle args = new Bundle();
+        if (DialogObject.isEncryptedDialog(dialogId)) {
+            args.putInt("enc_id", DialogObject.getEncryptedChatId(dialogId));
+        } else if (DialogObject.isUserDialog(dialogId)) {
+            args.putLong("user_id", dialogId);
+        } else {
+            args.putLong("chat_id", -dialogId);
+        }
+
+        if (account == UserConfig.selectedAccount) {
+            presentFragment(new ChatActivity(args));
+            return;
+        }
+
+        LaunchActivity launch = LaunchActivity.instance;
+        if (launch == null) {
+            return;
+        }
+        // Switching account rebuilds the fragment stack (this fragment is
+        // destroyed). After this call only reach through LaunchActivity, never
+        // through this fragment's own members.
+        launch.switchToAccount(account, true);
+        NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.closeChats);
+        if (launch.getActionBarLayout() != null) {
+            launch.getActionBarLayout().presentFragment(new ChatActivity(args));
+        }
+    }
+
+    @Override
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.dialogsNeedReload
+                || id == NotificationCenter.dialogsUnreadCounterChanged
+                || id == NotificationCenter.notificationsCountUpdated
+                || id == NotificationCenter.updateInterfaces) {
+            AndroidUtilities.runOnUIThread(this::reload);
+        }
+    }
+
+    private class ListAdapter extends RecyclerListView.SelectionAdapter {
+
+        private final Context context;
+
+        ListAdapter(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public boolean isEnabled(RecyclerView.ViewHolder holder) {
+            return true;
+        }
+
+        @Override
+        public int getItemCount() {
+            return entries.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            // Account is the view type: each DialogCell is constructed bound to a
+            // specific account (its currentAccount is set in the constructor and
+            // has no setter), so RecyclerView recycles cells per-account and a
+            // row is only ever bound into a cell built for its own account.
+            if (position < 0 || position >= entries.size()) {
+                return 0;
+            }
+            return entries.get(position).account;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(android.view.ViewGroup parent, int viewType) {
+            DialogCell cell = new DialogCell(null, context, false, false, viewType, null);
+            cell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(72)));
+            return new RecyclerListView.Holder(cell);
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (position < 0 || position >= entries.size()) {
+                return;
+            }
+            UnifiedInboxEntry entry = entries.get(position);
+            DialogCell cell = (DialogCell) holder.itemView;
+            cell.avatarImage.setCurrentAccount(entry.account);
+            cell.setDialog(entry.dialog, DialogsActivity.DIALOGS_TYPE_DEFAULT, 0);
+        }
+    }
+}
