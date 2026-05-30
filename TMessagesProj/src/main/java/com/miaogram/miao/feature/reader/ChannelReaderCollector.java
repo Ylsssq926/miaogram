@@ -76,38 +76,44 @@ public final class ChannelReaderCollector {
     /** Collects and buckets the current account's channels by grade. */
     public static Result collect(int account) {
         Result result = new Result();
-        MessagesController controller = MessagesController.getInstance(account);
-        ArrayList<TLRPC.Dialog> snapshot = new ArrayList<>(controller.getDialogs(0));
-        for (int i = 0; i < snapshot.size(); i++) {
-            TLRPC.Dialog dialog = snapshot.get(i);
-            if (dialog == null || dialog instanceof TLRPC.TL_dialogFolder) {
-                continue;
+        // getDialogs(0) returns the live list; guard against a background thread
+        // mutating it while we copy/iterate (mirrors upstream's defensive reads).
+        try {
+            MessagesController controller = MessagesController.getInstance(account);
+            ArrayList<TLRPC.Dialog> snapshot = new ArrayList<>(controller.getDialogs(0));
+            for (int i = 0; i < snapshot.size(); i++) {
+                TLRPC.Dialog dialog = snapshot.get(i);
+                if (dialog == null || dialog instanceof TLRPC.TL_dialogFolder) {
+                    continue;
+                }
+                // channels are chat dialogs (negative id)
+                if (dialog.id >= 0) {
+                    continue;
+                }
+                TLRPC.Chat chat = controller.getChat(-dialog.id);
+                if (chat == null || !ChatObject.isChannelAndNotMegaGroup(chat)) {
+                    continue;
+                }
+                int unread = controller.getDialogUnreadCount(dialog);
+                int level = ChannelGrading.getLevel(account, dialog.id);
+                Item item = new Item(account, dialog, level, unread, dialog.last_message_date);
+                switch (level) {
+                    case ChannelGrading.LEVEL_MUST_READ:
+                        result.mustRead.add(item);
+                        break;
+                    case ChannelGrading.LEVEL_SCAN:
+                        result.scan.add(item);
+                        break;
+                    case ChannelGrading.LEVEL_ARCHIVED:
+                        result.archived.add(item);
+                        break;
+                    default:
+                        result.ungraded.add(item);
+                        break;
+                }
             }
-            // channels are chat dialogs (negative id)
-            if (dialog.id >= 0) {
-                continue;
-            }
-            TLRPC.Chat chat = controller.getChat(-dialog.id);
-            if (chat == null || !ChatObject.isChannelAndNotMegaGroup(chat)) {
-                continue;
-            }
-            int unread = controller.getDialogUnreadCount(dialog);
-            int level = ChannelGrading.getLevel(account, dialog.id);
-            Item item = new Item(account, dialog, level, unread, dialog.last_message_date);
-            switch (level) {
-                case ChannelGrading.LEVEL_MUST_READ:
-                    result.mustRead.add(item);
-                    break;
-                case ChannelGrading.LEVEL_SCAN:
-                    result.scan.add(item);
-                    break;
-                case ChannelGrading.LEVEL_ARCHIVED:
-                    result.archived.add(item);
-                    break;
-                default:
-                    result.ungraded.add(item);
-                    break;
-            }
+        } catch (Exception e) {
+            org.telegram.messenger.FileLog.e(e);
         }
         Comparator<Item> byDate = Comparator.comparingLong((Item it) -> it.date).reversed();
         Collections.sort(result.mustRead, byDate);

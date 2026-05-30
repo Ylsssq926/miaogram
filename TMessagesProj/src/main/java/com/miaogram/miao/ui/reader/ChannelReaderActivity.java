@@ -67,12 +67,13 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
     private ChannelReaderCollector.Result data;
     private final List<Row> rows = new ArrayList<>();
 
-    private final int[] observedEvents = {
+    // Per-account events: posted on NotificationCenter.getInstance(currentAccount).
+    private static final int[] PER_ACCOUNT_EVENTS = {
             NotificationCenter.dialogsNeedReload,
             NotificationCenter.updateInterfaces,
             NotificationCenter.dialogsUnreadCounterChanged,
-            NotificationCenter.notificationsCountUpdated,
     };
+    // notificationsCountUpdated is posted on the GLOBAL instance, not per-account.
 
     /** A display row: either a section header or a channel item. */
     private static final class Row {
@@ -100,18 +101,20 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
     @Override
     public boolean onFragmentCreate() {
         NotificationCenter nc = NotificationCenter.getInstance(currentAccount);
-        for (int event : observedEvents) {
+        for (int event : PER_ACCOUNT_EVENTS) {
             nc.addObserver(this, event);
         }
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.notificationsCountUpdated);
         return super.onFragmentCreate();
     }
 
     @Override
     public void onFragmentDestroy() {
         NotificationCenter nc = NotificationCenter.getInstance(currentAccount);
-        for (int event : observedEvents) {
+        for (int event : PER_ACCOUNT_EVENTS) {
             nc.removeObserver(this, event);
         }
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.notificationsCountUpdated);
         super.onFragmentDestroy();
     }
 
@@ -267,7 +270,12 @@ public class ChannelReaderActivity extends BaseFragment implements NotificationC
 
     @Override
     public void didReceivedNotification(int id, int account, Object... args) {
-        if (account != currentAccount) {
+        if (id == NotificationCenter.notificationsCountUpdated) {
+            // Global event: the affected account is in args[0].
+            if (args.length > 0 && args[0] instanceof Integer && (Integer) args[0] != currentAccount) {
+                return;
+            }
+        } else if (account != currentAccount) {
             return;
         }
         AndroidUtilities.runOnUIThread(this::reload);

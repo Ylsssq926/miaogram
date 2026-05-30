@@ -43,7 +43,7 @@ public final class UrlSanitizer {
 
     private static boolean isTracking(String key) {
         if (key == null) return false;
-        String k = key.toLowerCase().trim();
+        String k = key.toLowerCase(java.util.Locale.ROOT).trim();
         if (EXACT.contains(k)) return true;
         for (String p : PREFIX) {
             if (k.startsWith(p)) return true;

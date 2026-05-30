@@ -68,36 +68,50 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
 
     private final List<UnifiedInboxEntry> entries = new ArrayList<>();
 
-    private final int[] observedEvents = {
+    // Per-account events: posted on NotificationCenter.getInstance(account).
+    private static final int[] PER_ACCOUNT_EVENTS = {
             NotificationCenter.dialogsNeedReload,
             NotificationCenter.updateInterfaces,
             NotificationCenter.dialogsUnreadCounterChanged,
-            NotificationCenter.notificationsCountUpdated,
     };
+    // notificationsCountUpdated is posted on the GLOBAL instance, not per-account.
+
+    // Tracks which accounts we've already subscribed to, so newly logged-in
+    // accounts can be picked up on the next reload (see addObserversForActivatedAccounts).
+    private final java.util.Set<Integer> observedAccounts = new java.util.HashSet<>();
 
     @Override
     public boolean onFragmentCreate() {
-        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
-            if (!UserConfig.getInstance(a).isClientActivated()) {
-                continue;
-            }
-            NotificationCenter nc = NotificationCenter.getInstance(a);
-            for (int event : observedEvents) {
-                nc.addObserver(this, event);
-            }
-        }
+        addObserversForActivatedAccounts();
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.notificationsCountUpdated);
         return super.onFragmentCreate();
     }
 
     @Override
     public void onFragmentDestroy() {
-        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
-            NotificationCenter nc = NotificationCenter.getInstance(a);
-            for (int event : observedEvents) {
+        for (int account : observedAccounts) {
+            NotificationCenter nc = NotificationCenter.getInstance(account);
+            for (int event : PER_ACCOUNT_EVENTS) {
                 nc.removeObserver(this, event);
             }
         }
+        observedAccounts.clear();
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.notificationsCountUpdated);
         super.onFragmentDestroy();
+    }
+
+    /** Subscribes to per-account events for any activated account not yet observed. */
+    private void addObserversForActivatedAccounts() {
+        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+            if (!UserConfig.getInstance(a).isClientActivated() || observedAccounts.contains(a)) {
+                continue;
+            }
+            NotificationCenter nc = NotificationCenter.getInstance(a);
+            for (int event : PER_ACCOUNT_EVENTS) {
+                nc.addObserver(this, event);
+            }
+            observedAccounts.add(a);
+        }
     }
 
     @Override
@@ -167,6 +181,8 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
     }
 
     private void reload() {
+        // Pick up accounts logged in after this screen was opened.
+        addObserversForActivatedAccounts();
         entries.clear();
         if (UnifiedInboxCollector.isEnabled()) {
             entries.addAll(UnifiedInboxCollector.collect(currentMode));
@@ -180,7 +196,7 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
     }
 
     private void openEntry(UnifiedInboxEntry entry) {
-        if (entry == null || entry.dialog == null) {
+        if (entry == null || entry.dialog == null || entry.dialog.id == 0) {
             return;
         }
         final int account = entry.account;
@@ -206,12 +222,15 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
         }
         // Switching account rebuilds the fragment stack (this fragment is
         // destroyed). After this call only reach through LaunchActivity, never
-        // through this fragment's own members.
+        // through this fragment's own members. Present the chat on the next
+        // frame so the new account's controllers finish (re)initializing first.
         launch.switchToAccount(account, true);
         NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.closeChats);
-        if (launch.getActionBarLayout() != null) {
-            launch.getActionBarLayout().presentFragment(new ChatActivity(args));
-        }
+        AndroidUtilities.runOnUIThread(() -> {
+            if (LaunchActivity.instance != null && LaunchActivity.instance.getActionBarLayout() != null) {
+                LaunchActivity.instance.getActionBarLayout().presentFragment(new ChatActivity(args));
+            }
+        });
     }
 
     @Override
@@ -256,7 +275,15 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(android.view.ViewGroup parent, int viewType) {
+            // viewType == account: the cell's currentAccount is fixed in the
+            // constructor (no setter), so RecyclerView only ever binds a row
+            // into a cell built for that row's own account.
             DialogCell cell = new DialogCell(null, context, false, false, viewType, null);
+            // Disable story long-press: the story viewer resolves via
+            // LaunchActivity.getLastFragment() which is the current account, not
+            // this row's account, so cross-account story preview would use the
+            // wrong account. Plain tap (open chat) still switches account first.
+            cell.storyParams.allowLongress = false;
             cell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(72)));
             return new RecyclerListView.Holder(cell);
         }
@@ -268,7 +295,6 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
             }
             UnifiedInboxEntry entry = entries.get(position);
             DialogCell cell = (DialogCell) holder.itemView;
-            cell.avatarImage.setCurrentAccount(entry.account);
             cell.setDialog(entry.dialog, DialogsActivity.DIALOGS_TYPE_DEFAULT, 0);
         }
     }

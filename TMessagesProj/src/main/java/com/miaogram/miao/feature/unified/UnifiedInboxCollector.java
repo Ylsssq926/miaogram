@@ -70,23 +70,31 @@ public final class UnifiedInboxCollector {
             if (!UserConfig.getInstance(a).isClientActivated()) {
                 continue;
             }
-            MessagesController controller = MessagesController.getInstance(a);
-            ArrayList<TLRPC.Dialog> snapshot = new ArrayList<>(controller.getDialogs(0));
-            for (int i = 0; i < snapshot.size(); i++) {
-                TLRPC.Dialog dialog = snapshot.get(i);
-                if (dialog == null || dialog instanceof TLRPC.TL_dialogFolder) {
-                    continue;
-                }
-                if (mode == MODE_MENTIONS) {
-                    if (dialog.unread_mentions_count > 0) {
-                        out.add(new UnifiedInboxEntry(a, dialog, dialog.unread_mentions_count, dialog.last_message_date));
+            // getDialogs(0) returns the live list, and a background thread may
+            // mutate it while we copy/iterate. Guard per-account so one account's
+            // concurrent change can't abort the whole aggregation. Mirrors
+            // upstream NotificationsController.getTotalAllUnreadCount.
+            try {
+                MessagesController controller = MessagesController.getInstance(a);
+                ArrayList<TLRPC.Dialog> snapshot = new ArrayList<>(controller.getDialogs(0));
+                for (int i = 0; i < snapshot.size(); i++) {
+                    TLRPC.Dialog dialog = snapshot.get(i);
+                    if (dialog == null || dialog instanceof TLRPC.TL_dialogFolder) {
+                        continue;
                     }
-                } else {
-                    int unread = controller.getDialogUnreadCount(dialog);
-                    if (unread > 0 || dialog.unread_mark) {
-                        out.add(new UnifiedInboxEntry(a, dialog, unread, dialog.last_message_date));
+                    if (mode == MODE_MENTIONS) {
+                        if (dialog.unread_mentions_count > 0) {
+                            out.add(new UnifiedInboxEntry(a, dialog, dialog.unread_mentions_count, dialog.last_message_date));
+                        }
+                    } else {
+                        int unread = controller.getDialogUnreadCount(dialog);
+                        if (unread > 0 || dialog.unread_mark) {
+                            out.add(new UnifiedInboxEntry(a, dialog, unread, dialog.last_message_date));
+                        }
                     }
                 }
+            } catch (Exception e) {
+                org.telegram.messenger.FileLog.e(e);
             }
         }
         Collections.sort(out, Comparator.comparingLong((UnifiedInboxEntry e) -> e.date).reversed());
