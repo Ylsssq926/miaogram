@@ -61,6 +61,23 @@ public final class UnifiedInboxCollector {
     }
 
     /**
+     * Whether every activated account has finished its initial dialog load.
+     * Used to show a loading state instead of a misleading "all caught up"
+     * when an account's dialogs are still being fetched (e.g. cold start).
+     */
+    public static boolean allAccountsLoaded() {
+        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+            if (!UserConfig.getInstance(a).isClientActivated()) {
+                continue;
+            }
+            if (!MessagesController.getInstance(a).dialogsLoaded) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Collects entries across all activated accounts for the given mode,
      * sorted by last message date descending.
      */

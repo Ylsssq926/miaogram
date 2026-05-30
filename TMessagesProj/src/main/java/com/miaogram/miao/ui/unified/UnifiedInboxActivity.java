@@ -64,6 +64,7 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
     private RecyclerListView listView;
     private ListAdapter adapter;
     private FrameLayout emptyContainer;
+    private org.telegram.ui.Components.RadialProgressView progressView;
     private ScrollSlidingTextTabStrip tabStrip;
 
     private final List<UnifiedInboxEntry> entries = new ArrayList<>();
@@ -164,6 +165,10 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
         emptyContainer.setVisibility(View.GONE);
         frameLayout.addView(emptyContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, 44, 0, 0));
 
+        progressView = new org.telegram.ui.Components.RadialProgressView(context);
+        progressView.setVisibility(View.GONE);
+        frameLayout.addView(progressView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 0, 44, 0, 0));
+
         listView = new RecyclerListView(context);
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
@@ -185,14 +190,24 @@ public class UnifiedInboxActivity extends BaseFragment implements NotificationCe
         // Pick up accounts logged in after this screen was opened.
         addObserversForActivatedAccounts();
         entries.clear();
-        if (UnifiedInboxCollector.isEnabled()) {
+        boolean enabled = UnifiedInboxCollector.isEnabled();
+        if (enabled) {
             entries.addAll(UnifiedInboxCollector.collect(currentMode));
         }
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
+
+        boolean empty = entries.isEmpty();
+        // Show a spinner instead of "all caught up" while some account is still
+        // loading its dialogs (e.g. cold start), to avoid a misleading flash.
+        boolean loading = empty && enabled && !UnifiedInboxCollector.allAccountsLoaded();
+
+        if (progressView != null) {
+            progressView.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
         if (emptyContainer != null) {
-            boolean showEmpty = entries.isEmpty();
+            boolean showEmpty = empty && !loading;
             emptyContainer.setVisibility(showEmpty ? View.VISIBLE : View.GONE);
             if (showEmpty) {
                 emptyContainer.removeAllViews();
