@@ -114,6 +114,10 @@ android {
 
         multiDexEnabled true
 
+        // MIAOGRAM: Telegram API credentials sourced from .private/api-keys.properties
+        buildConfigField "int", "MIAO_APP_ID", getMiaoAppId()
+        buildConfigField "String", "MIAO_APP_HASH", "\"" + getMiaoAppHash() + "\""
+
         externalNativeBuild {
             cmake {
                 version '3.10.2'
@@ -235,6 +239,37 @@ def getProps(String propName) {
     } else {
         return "";
     }
+}
+
+// MIAOGRAM: read Telegram API credentials from .private/api-keys.properties
+// (gitignored). Falls back to the upstream default so the build never breaks
+// when the file is missing or still holds the placeholder template.
+def loadMiaoApiProps() {
+    def props = new Properties()
+    def f = rootProject.file('.private/api-keys.properties')
+    if (f.exists()) {
+        f.withReader('UTF-8') { props.load(it) }
+    }
+    return props
+}
+
+def getMiaoAppId() {
+    def v = loadMiaoApiProps().getProperty("APP_ID")
+    // Treat empty / template placeholder / non-numeric as "not configured".
+    if (v == null || v.trim().isEmpty() || !v.trim().matches("\\d+")) {
+        return "4"   // upstream default app id
+    }
+    return v.trim()
+}
+
+def getMiaoAppHash() {
+    def v = loadMiaoApiProps().getProperty("APP_HASH")
+    // A valid Telegram api_hash is 32 lowercase hex chars; anything else
+    // (empty / placeholder text) falls back to the upstream default.
+    if (v == null || !v.trim().matches("[0-9a-fA-F]{32}")) {
+        return "014b35b6184100b085b0d0572f9b5103"   // upstream default app hash
+    }
+    return v.trim().toLowerCase()
 }
 apply plugin: 'com.google.gms.google-services'
 
