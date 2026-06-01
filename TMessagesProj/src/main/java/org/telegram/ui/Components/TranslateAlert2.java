@@ -282,7 +282,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
             reqId = null;
         }
 
-        final String method = MessagesController.getInstance(currentAccount).translationsManualEnabled;
+        final String method = com.miaogram.miao.feature.translate.MiaoTranslate.preferredManualMethod(MessagesController.getInstance(currentAccount).translationsManualEnabled); // MIAOGRAM_HOOK: prefer free Google source when translation enhancement is on
         if ("alternative".equalsIgnoreCase(method)) {
             translateAlt();
             return;

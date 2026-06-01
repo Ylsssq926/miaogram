@@ -78,6 +78,15 @@
     <string name="MiaoKeywordsCount_other">%1$d 个关键词</string>
     <string name="MiaoMessagesSectionHint">关键词静默只隐藏通知。消息仍会出现在对话中，未读数也不变。</string>
 
+    <!-- Translation section -->
+    <string name="MiaoTranslateSection">翻译</string>
+    <string name="MiaoTranslateEnhanced">内置翻译</string>
+    <string name="MiaoTranslateEnhancedInfo">无需 Premium 即可翻译消息，包括整段对话翻译</string>
+    <string name="MiaoTranslateSource">翻译源</string>
+    <string name="MiaoTranslateSourceGoogle">Google（免费）</string>
+    <string name="MiaoTranslateSourceTelegram">Telegram（官方）</string>
+    <string name="MiaoTranslateSectionHint">免费的 Google 源无需 Premium，大多数 Telegram 客户端都在使用。若某次翻译失败，可切换到官方源。</string>
+
     <!-- Unified cross-account inbox -->
     <string name="MiaoUnifiedInbox">聚合收件箱</string>
     <string name="MiaoUnifiedUnread">未读</string>

@@ -72,6 +72,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
     private int keywordMuteRow;
     private int keywordsEditRow;
     private int messagesInfoRow;
+    private int translateHeaderRow;
+    private int translateEnhancedRow;
+    private int translateSourceRow;
+    private int translateInfoRow;
 
     @NonNull
     @Override
@@ -94,12 +98,23 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                 MiaoConfig.setFeatureEnabled(flag, newValue);
                 ((TextCheckCell) view).setChecked(newValue);
                 onFlagToggled(flag);
+                if (flag == Flags.MIAO_TR_1 && listView.getAdapter() != null) {
+                    listView.getAdapter().notifyItemChanged(translateSourceRow);
+                }
                 return;
             }
             if (position == keywordsEditRow) {
                 com.miaogram.miao.feature.KeywordFilterDialog.show(context, () -> {
                     if (listView.getAdapter() != null) {
                         listView.getAdapter().notifyItemChanged(keywordsEditRow);
+                    }
+                });
+                return;
+            }
+            if (position == translateSourceRow) {
+                showTranslateSourceDialog(context, () -> {
+                    if (listView.getAdapter() != null) {
+                        listView.getAdapter().notifyItemChanged(translateSourceRow);
                     }
                 });
                 return;
@@ -145,6 +160,26 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         }
     }
 
+    private void showTranslateSourceDialog(Context context, Runnable onChanged) {
+        CharSequence[] options = new CharSequence[]{
+                LocaleController.getString(R.string.MiaoTranslateSourceGoogle),
+                LocaleController.getString(R.string.MiaoTranslateSourceTelegram),
+        };
+        org.telegram.ui.ActionBar.AlertDialog.Builder builder =
+                new org.telegram.ui.ActionBar.AlertDialog.Builder(context);
+        builder.setTitle(LocaleController.getString(R.string.MiaoTranslateSource));
+        builder.setItems(options, (dialog, which) -> {
+            String source = which == 1
+                    ? com.miaogram.miao.feature.translate.MiaoTranslate.SOURCE_TELEGRAM
+                    : com.miaogram.miao.feature.translate.MiaoTranslate.SOURCE_GOOGLE;
+            com.miaogram.miao.feature.translate.MiaoTranslate.setSource(source);
+            if (onChanged != null) {
+                onChanged.run();
+            }
+        });
+        builder.show();
+    }
+
     private void buildRows() {
         rowCount = 0;
         brandHeaderRow = rowCount++;
@@ -177,6 +212,10 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         keywordMuteRow = rowCount++;
         keywordsEditRow = rowCount++;
         messagesInfoRow = rowCount++;
+        translateHeaderRow = rowCount++;
+        translateEnhancedRow = rowCount++;
+        translateSourceRow = rowCount++;
+        translateInfoRow = rowCount++;
     }
 
     /** Maps a toggle row to its backing Flag, or null for non-toggle rows. */
@@ -196,6 +235,7 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
         if (position == hideNonContactPhoneRow) return Flags.MIAO_PF_5;
         if (position == safeDefaultsRow) return Flags.MIAO_PF_6;
         if (position == keywordMuteRow) return Flags.MIAO_MS_1;
+        if (position == translateEnhancedRow) return Flags.MIAO_TR_1;
         return null;
     }
 
@@ -231,14 +271,15 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
             }
             if (position == accountHeaderRow || position == folderHeaderRow
                     || position == interfaceHeaderRow || position == privacyHeaderRow
-                    || position == messagesHeaderRow || position == brandHeaderRow) {
+                    || position == messagesHeaderRow || position == brandHeaderRow
+                    || position == translateHeaderRow) {
                 return TYPE_HEADER;
             }
             if (position == unifiedInboxNavRow || position == channelReaderNavRow
                     || position == aboutNavRow) {
                 return TYPE_NAV;
             }
-            if (position == keywordsEditRow) {
+            if (position == keywordsEditRow || position == translateSourceRow) {
                 return TYPE_SETTINGS;
             }
             return TYPE_INFO;
@@ -341,6 +382,11 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                                 LocaleController.getString(R.string.MiaoKeywordMute),
                                 LocaleController.getString(R.string.MiaoKeywordMuteInfo),
                                 Flags.MIAO_MS_1.isEnabled(), true, true);
+                    } else if (position == translateEnhancedRow) {
+                        cell.setTextAndValueAndCheck(
+                                LocaleController.getString(R.string.MiaoTranslateEnhanced),
+                                LocaleController.getString(R.string.MiaoTranslateEnhancedInfo),
+                                Flags.MIAO_TR_1.isEnabled(), true, true);
                     }
                     break;
                 }
@@ -358,6 +404,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setText(LocaleController.getString(R.string.MiaoPrivacySectionInfo));
                     } else if (position == messagesHeaderRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoMessagesSectionInfo));
+                    } else if (position == translateHeaderRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoTranslateSection));
                     }
                     break;
                 }
@@ -390,6 +438,15 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setTextAndValue(
                                 LocaleController.getString(R.string.MiaoKeywords),
                                 value, true);
+                    } else if (position == translateSourceRow) {
+                        String source = com.miaogram.miao.feature.translate.MiaoTranslate.getSource();
+                        String value = com.miaogram.miao.feature.translate.MiaoTranslate.SOURCE_TELEGRAM.equals(source)
+                                ? LocaleController.getString(R.string.MiaoTranslateSourceTelegram)
+                                : LocaleController.getString(R.string.MiaoTranslateSourceGoogle);
+                        cell.setTextAndValue(
+                                LocaleController.getString(R.string.MiaoTranslateSource),
+                                value, false);
+                        cell.setEnabled(Flags.MIAO_TR_1.isEnabled(), null);
                     }
                     break;
                 }
@@ -407,6 +464,8 @@ public class MiaoMainPreferences extends MiaoBasePreferencesEntry {
                         cell.setText(LocaleController.getString(R.string.MiaoPrivacySectionHint));
                     } else if (position == messagesInfoRow) {
                         cell.setText(LocaleController.getString(R.string.MiaoMessagesSectionHint));
+                    } else if (position == translateInfoRow) {
+                        cell.setText(LocaleController.getString(R.string.MiaoTranslateSectionHint));
                     }
                     break;
                 }

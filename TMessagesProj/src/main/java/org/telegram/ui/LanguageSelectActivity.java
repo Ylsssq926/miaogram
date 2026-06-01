@@ -216,7 +216,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
                     } else if (position == autoTranslationPosition) {
                         boolean value = !getChatValue();
-                        if (value && !getUserConfig().isPremium()) {
+                        if (value && !getUserConfig().isPremium() && !com.miaogram.miao.feature.translate.MiaoTranslate.unlockChatTranslate()) { // MIAOGRAM_HOOK: unlock dialog-level translation
                             showDialog(new PremiumFeatureBottomSheet(LanguageSelectActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, false));
                             return;
                         }

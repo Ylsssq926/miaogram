@@ -83,6 +83,15 @@
     <string name="MiaoKeywordsCount_other">%1$d keywords</string>
     <string name="MiaoMessagesSectionHint">Keyword muting only hides notifications. Messages still appear in chats and unread counts are unchanged.</string>
 
+    <!-- Translation section -->
+    <string name="MiaoTranslateSection">Translation</string>
+    <string name="MiaoTranslateEnhanced">Built-in translation</string>
+    <string name="MiaoTranslateEnhancedInfo">Translate messages without Premium, including whole-chat translation</string>
+    <string name="MiaoTranslateSource">Translation source</string>
+    <string name="MiaoTranslateSourceGoogle">Google (free)</string>
+    <string name="MiaoTranslateSourceTelegram">Telegram (official)</string>
+    <string name="MiaoTranslateSectionHint">The free Google source needs no Premium and is used by most Telegram clients. Switch to the official source if a translation fails.</string>
+
     <!-- Unified cross-account inbox -->
     <string name="MiaoUnifiedInbox">Unified inbox</string>
     <string name="MiaoUnifiedUnread">Unread</string>

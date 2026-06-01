@@ -9568,7 +9568,7 @@ public class ChatActivity extends BaseFragment implements
         translateButton = new TranslateButton(getContext(), this, themeDelegate) {
             @Override
             protected void onButtonClick() {
-                if (getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation) {
+                if (getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation || com.miaogram.miao.feature.translate.MiaoTranslate.unlockChatTranslate()) { // MIAOGRAM_HOOK: unlock dialog-level translation
                     getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId());
                 } else {
                     MessagesController.getNotificationsSettings(currentAccount).edit().putInt("dialog_show_translate_count" + getDialogId(), 14).commit();

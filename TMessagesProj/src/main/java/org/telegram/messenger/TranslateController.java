@@ -97,6 +97,9 @@ public class TranslateController extends BaseController {
         if (!isChatTranslateEnabled()) {
             return false;
         }
+        if (com.miaogram.miao.feature.translate.MiaoTranslate.unlockChatTranslate()) { // MIAOGRAM_HOOK: unlock dialog-level translation (client-side, free Google source)
+            return true;
+        }
         final TLRPC.Chat chat = getMessagesController().getChat(-dialogId);
         return (
             UserConfig.getInstance(currentAccount).isPremium() ||
@@ -1050,7 +1053,7 @@ public class TranslateController extends BaseController {
                     }
                 }
 
-                final String method = getMessagesController().translationsAutoEnabled;
+                final String method = com.miaogram.miao.feature.translate.MiaoTranslate.preferredAutoMethod(getMessagesController().translationsAutoEnabled); // MIAOGRAM_HOOK: prefer free Google source when translation enhancement is on
                 if ("alternative".equals(method) || "system".equals(method)) {
                     final String toLanguage = pendingTranslation1.language;
                     for (int i = 0; i < pendingTranslation1.messageIds.size(); ++i) {
