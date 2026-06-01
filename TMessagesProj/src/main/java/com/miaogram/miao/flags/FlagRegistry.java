@@ -24,6 +24,7 @@ package com.miaogram.miao.flags;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.miaogram.miao.entitlement.MiaoEntitlements;
 import com.miaogram.miao.utils.MiaoLogger;
 import com.miaogram.miao.utils.MiaoSharedPrefs;
 
@@ -73,8 +74,16 @@ public final class FlagRegistry {
 
     /**
      * Resolve the effective enabled state of a flag.
+     *
+     * Effective state = configured flag value AND access-tier availability.
+     * Bootstrap entitlement currently grants every tier, so existing behavior is unchanged.
      */
     public static boolean isEnabled(@NonNull Flag flag) {
+        return MiaoEntitlements.canUse(flag) && isConfiguredEnabled(flag);
+    }
+
+    /** Resolve the configured flag value (from prefs/default) before access-tier gating. */
+    private static boolean isConfiguredEnabled(@NonNull Flag flag) {
         switch (flag.getSource()) {
             case LOCAL:
             case REMOTE_OVERRIDABLE:

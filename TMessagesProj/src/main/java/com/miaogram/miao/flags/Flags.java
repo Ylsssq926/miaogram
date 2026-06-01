@@ -19,7 +19,8 @@
  * Adding a new flag:
  *   1. Pick a domain prefix (ac/ui/pf/...).
  *   2. Find the next free number for that domain.
- *   3. Add a `public static final Flag MIAO_<DOM>_<N>` here using define(...).
+ *   3. Add a `public static final Flag MIAO_<DOM>_<N>` here using define(...)
+ *      or definePro(...) for PRO-tier features.
  *   4. Update .private/flag-mapping.md with what the flag actually does.
  *   5. Use it from business code: if (Flags.MIAO_AC_1.isEnabled()) { ... }
  */
@@ -36,10 +37,10 @@ public final class Flags {
     public static final Flag MIAO_AC_2 = define("miao_ac_2", true, FlagSource.LOCAL);
 
     /** ac:3 — see .private/flag-mapping.md */
-    public static final Flag MIAO_AC_3 = define("miao_ac_3", true, FlagSource.LOCAL);
+    public static final Flag MIAO_AC_3 = definePro("miao_ac_3", true, FlagSource.LOCAL);
 
     /** ac:4 — see .private/flag-mapping.md */
-    public static final Flag MIAO_AC_4 = define("miao_ac_4", true, FlagSource.LOCAL);
+    public static final Flag MIAO_AC_4 = definePro("miao_ac_4", true, FlagSource.LOCAL);
 
     // ----- UI domain ----------------------------------------------------------------------------
 
@@ -97,7 +98,15 @@ public final class Flags {
     // ============================================================================================
 
     private static Flag define(String key, boolean defaultValue, FlagSource source) {
-        return FlagRegistry.register(new Flag(key, defaultValue, source));
+        return define(key, defaultValue, source, FlagTier.FREE);
+    }
+
+    private static Flag definePro(String key, boolean defaultValue, FlagSource source) {
+        return define(key, defaultValue, source, FlagTier.PRO);
+    }
+
+    private static Flag define(String key, boolean defaultValue, FlagSource source, FlagTier tier) {
+        return FlagRegistry.register(new Flag(key, defaultValue, source, tier));
     }
 
     /**

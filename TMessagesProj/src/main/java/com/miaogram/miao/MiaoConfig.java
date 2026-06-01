@@ -29,6 +29,7 @@ package com.miaogram.miao;
 
 import androidx.annotation.NonNull;
 
+import com.miaogram.miao.entitlement.MiaoEntitlements;
 import com.miaogram.miao.flags.Flag;
 import com.miaogram.miao.flags.FlagRegistry;
 import com.miaogram.miao.utils.MiaoLogger;
@@ -40,9 +41,17 @@ public final class MiaoConfig {
         // facade class, do not instantiate
     }
 
-    /** Type-safe form: query a specific Flag instance. */
+    /** Type-safe form: query a specific Flag instance's effective enabled state. */
     public static boolean isFeatureEnabled(@NonNull Flag flag) {
         return FlagRegistry.isEnabled(flag);
+    }
+
+    /**
+     * Returns whether PRO-tier features are currently unlocked.
+     * Pair with Flag.requiresPro() at paywall decision points; bootstrap builds are all-access.
+     */
+    public static boolean isProUnlocked() {
+        return MiaoEntitlements.isProUnlocked();
     }
 
     /**
