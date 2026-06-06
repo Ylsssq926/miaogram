@@ -39,7 +39,8 @@ This is a **public open-source repository**. Follow these rules strictly:
 miaogram/
 ├── .private/          ← GITIGNORED - sensitive docs, keys, strategy
 ├── docs/              ← Public documentation
-├── TMessagesProj/     ← Main Android project (will be added)
+├── TMessagesProj/     ← Telegram Android library module + MiaoGram hooks
+├── TMessagesProj_App/ ← Main Android app module
 ├── .gitignore
 ├── LICENSE            ← GPLv2
 └── README.md

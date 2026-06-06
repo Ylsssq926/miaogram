@@ -241,9 +241,10 @@ def getProps(String propName) {
     }
 }
 
-// MIAOGRAM: read Telegram API credentials from .private/api-keys.properties
-// (gitignored). Falls back to the upstream default so the build never breaks
-// when the file is missing or still holds the placeholder template.
+// MIAOGRAM: read Telegram API credentials from either environment variables
+// (MIAO_APP_ID / MIAO_APP_HASH) or .private/api-keys.properties (gitignored).
+// Public source releases intentionally ship without API credentials. Builders must
+// register their own app at https://my.telegram.org/apps before compiling a usable client.
 def loadMiaoApiProps() {
     def props = new Properties()
     def f = rootProject.file('.private/api-keys.properties')
@@ -253,24 +254,30 @@ def loadMiaoApiProps() {
     return props
 }
 
+def getMiaoApiProp(String propertyName, String envName) {
+    def envValue = System.getenv(envName)
+    if (envValue != null && !envValue.trim().isEmpty()) {
+        return envValue.trim()
+    }
+    return loadMiaoApiProps().getProperty(propertyName)
+}
+
 def getMiaoAppId() {
-    def v = loadMiaoApiProps().getProperty("APP_ID")
-    // Treat empty / template placeholder / non-numeric as "not configured".
+    def v = getMiaoApiProp("APP_ID", "MIAO_APP_ID")
     if (v == null || v.trim().isEmpty() || !v.trim().matches("\\d+")) {
-        return "4"   // upstream default app id
+        throw new GradleException("MiaoGram requires a valid APP_ID. Set MIAO_APP_ID or .private/api-keys.properties (APP_ID=...) using your own numeric API ID from https://my.telegram.org/apps.")
     }
     return v.trim()
 }
 
 def getMiaoAppHash() {
-    def v = loadMiaoApiProps().getProperty("APP_HASH")
-    // A valid Telegram api_hash is 32 lowercase hex chars; anything else
-    // (empty / placeholder text) falls back to the upstream default.
+    def v = getMiaoApiProp("APP_HASH", "MIAO_APP_HASH")
     if (v == null || !v.trim().matches("[0-9a-fA-F]{32}")) {
-        return "014b35b6184100b085b0d0572f9b5103"   // upstream default app hash
+        throw new GradleException("MiaoGram requires a valid APP_HASH. Set MIAO_APP_HASH or .private/api-keys.properties (APP_HASH=...) using your own 32-character API hash from https://my.telegram.org/apps.")
     }
-    return v.trim().toLowerCase()
+    return v.trim()
 }
+
 apply plugin: 'com.google.gms.google-services'
 
 task checkVisibility {
